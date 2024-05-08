@@ -1,0 +1,9 @@
+{
+  "testEnvironment": "node",
+  "transform": {
+    "^.+\\.(t|j)s$": "ts-jest"
+  },
+  "moduleNameMapper": {
+    "^@test/(.*)$": "<rootDir>/test/$1"
+  }
+}
