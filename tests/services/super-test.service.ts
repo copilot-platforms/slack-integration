@@ -1,7 +1,7 @@
 import * as request from 'superagent';
 
 export class SuperTestService {
-  private static baseUrl: string = `http://localhost:${process.env.APP_PORT || 3000}`;
+  private static baseUrl: string = process.env.VERCEL_URL || 'http://localhost:3000';
 
   public async get(url: string) {
     return request.get(`${SuperTestService.baseUrl}${url}`);
