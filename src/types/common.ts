@@ -8,11 +8,11 @@ export const TokenSchema = z.object({
 })
 export type Token = z.infer<typeof TokenSchema>
 
-export const IUTokenSchema = z.object({
+export const InternalUserTokenSchema = z.object({
   internalUserId: z.string(),
   workspaceId: z.string(),
 })
-export type IUToken = z.infer<typeof IUTokenSchema>
+export type InternalUserToken = z.infer<typeof InternalUserTokenSchema>
 
 export const ClientTokenSchema = z.object({
   clientId: z.string(),
