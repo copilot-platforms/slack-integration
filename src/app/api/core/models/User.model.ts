@@ -31,6 +31,8 @@ class User {
      * `authenticate` takes in the current request, parses the "token" searchParam from it,
      * uses `CopilotAPI` to check if the user token is valid
      * and finally returns an instance of `User` that is associated with this request
+     *
+     * @throws {APIError} Handles authentication errors gracefully
      */
     const token = req.nextUrl.searchParams.get('token')
     // Fetch token from search param and validate it
