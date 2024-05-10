@@ -1,0 +1,31 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+enum ChannelSyncOptions {
+  clientAndCompany
+  // In the future we might support client only or company only
+}
+
+model Setting {
+  id                      String             @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  workspaceId             String             @db.VarChar(32)
+  bidirectionalSlackSync  Boolean            @default(false)
+  channelsToSync          ChannelSyncOptions @default(clientAndCompany)
+  fallbackMessageSenderId String             @db.Uuid
+  slackChannelPrefix      String             @db.VarChar(255)
+  isSyncing               Boolean            @default(false)
+  syncedById              String?            @db.Uuid
+  lastSyncedAt            DateTime?
+  deletedAt               DateTime?
+
+  @@unique([workspaceId, deletedAt], name: "UQ_Settings_workspaceId_deletedAt")
+  @@index([workspaceId, deletedAt], name: "IX_Settings_workspaceId_deletedAt")
+  @@map("Settings")
+}
