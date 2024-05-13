@@ -1,4 +1,4 @@
-import { InternalUserToken, InternalUserTokenSchema } from '@/types/common'
+import { InternalUserToken } from '@/types/common'
 import APIError from '@api/core/exceptions/APIError'
 import httpStatus from 'http-status'
 import { CopilotAPI } from '@/utils/CopilotAPI'
@@ -44,7 +44,7 @@ class User {
     // Parse token payload from valid token
     const copilot = new CopilotAPI(tokenParsed.data)
     // Slack Integration app only allows IUs to perform syncs so token must have internalUserId
-    const payload = await copilot.getIUTokenPayload()
+    const payload = await copilot.getInternalUserTokenPayload()
     if (!payload) {
       throw new APIError(httpStatus.UNAUTHORIZED, 'Failed to authenticate token')
     }
