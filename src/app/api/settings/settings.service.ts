@@ -5,7 +5,7 @@ import { Setting } from '@prisma/client'
 export class SettingsService extends BaseService {
   async getSettings(): Promise<Setting | null> {
     return await this.db.setting.findFirst({
-      where: { workspaceId: this.user.workspaceId, syncedById: this.user.internalUserId },
+      where: { workspaceId: this.user.workspaceId, internalUserId: this.user.internalUserId },
     })
   }
 
@@ -14,7 +14,7 @@ export class SettingsService extends BaseService {
       data: {
         ...data,
         workspaceId: this.user.workspaceId,
-        syncedById: this.user.internalUserId,
+        internalUserId: this.user.internalUserId,
       },
     })
   }
