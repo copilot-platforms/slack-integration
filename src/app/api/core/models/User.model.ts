@@ -43,14 +43,10 @@ class User {
 
     // Parse token payload from valid token
     const copilot = new CopilotAPI(tokenParsed.data)
+    // Slack Integration app only allows IUs to perform syncs so token must have internalUserId
     const payload = await copilot.getIUTokenPayload()
     if (!payload) {
       throw new APIError(httpStatus.UNAUTHORIZED, 'Failed to authenticate token')
-    }
-
-    // Slack integration app only allows IUs to perform syncs so block client user access
-    if (!payload.internalUserId) {
-      throw new APIError(httpStatus.UNAUTHORIZED, 'You are not permitted to access this resource')
     }
 
     return new User(tokenParsed.data, payload)
