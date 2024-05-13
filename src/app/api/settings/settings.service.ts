@@ -9,10 +9,10 @@ export class SettingsService extends BaseService {
     })
   }
 
-  async createOrUpdateSettings(_data: CreateUpdateSettingsDTO): Promise<Setting> {
+  async createOrUpdateSettings(newData: CreateUpdateSettingsDTO): Promise<Setting> {
     const settings = await this.getSettings()
     const data = {
-      ..._data,
+      ...newData,
       workspaceId: this.user.workspaceId,
       internalUserId: this.user.internalUserId,
     }
