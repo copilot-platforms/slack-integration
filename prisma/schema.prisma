@@ -16,12 +16,12 @@ enum ChannelSyncOptions {
 model Setting {
   id                      String             @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   workspaceId             String             @db.VarChar(32)
+  internalUserId          String             @db.Uuid
   bidirectionalSlackSync  Boolean            @default(false)
   channelsToSync          ChannelSyncOptions @default(clientAndCompany)
   fallbackMessageSenderId String             @db.Uuid
   slackChannelPrefix      String             @db.VarChar(255)
   isSyncing               Boolean            @default(false)
-  syncedById              String?            @db.Uuid
   lastSyncedAt            DateTime?
   deletedAt               DateTime?
 

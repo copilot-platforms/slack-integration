@@ -5,12 +5,12 @@ CREATE TYPE "ChannelSyncOptions" AS ENUM ('clientAndCompany');
 CREATE TABLE "Settings" (
     "id" UUID NOT NULL DEFAULT gen_random_uuid(),
     "workspaceId" VARCHAR(32) NOT NULL,
+    "internalUserId" UUID NOT NULL,
     "bidirectionalSlackSync" BOOLEAN NOT NULL DEFAULT false,
     "channelsToSync" "ChannelSyncOptions" NOT NULL DEFAULT 'clientAndCompany',
     "fallbackMessageSenderId" UUID NOT NULL,
     "slackChannelPrefix" VARCHAR(255) NOT NULL,
     "isSyncing" BOOLEAN NOT NULL DEFAULT false,
-    "syncedById" UUID,
     "lastSyncedAt" TIMESTAMP(3),
     "deletedAt" TIMESTAMP(3),
 
