@@ -2,7 +2,7 @@
 
 import { Button, Typography } from '@mui/material'
 
-export const PrimaryBtn = ({ handleClick, children }: { handleClick: () => void; children?: string }) => {
+export const PrimaryBtn = ({ handleClick, children }: { handleClick?: () => void; children?: string }) => {
   return (
     <Button
       variant="contained"
