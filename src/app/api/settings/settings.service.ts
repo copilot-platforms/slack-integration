@@ -1,4 +1,4 @@
-import { CreateSettingsDTO, UpdateSettingsDTO } from '@/types/dtos/settings.dto'
+import { CreateUpdateSettingsDTO } from '@/types/dtos/settings.dto'
 import { BaseService } from '@api/core/services/base.service'
 import { Setting } from '@prisma/client'
 
@@ -9,19 +9,20 @@ export class SettingsService extends BaseService {
     })
   }
 
-  async createSettings(data: CreateSettingsDTO): Promise<Setting> {
-    return await this.db.setting.create({
-      data: {
-        ...data,
-        workspaceId: this.user.workspaceId,
-        internalUserId: this.user.internalUserId,
-      },
-    })
-  }
+  async createOrUpdateSettings(_data: CreateUpdateSettingsDTO): Promise<Setting> {
+    const settings = await this.getSettings()
+    const data = {
+      ..._data,
+      workspaceId: this.user.workspaceId,
+      internalUserId: this.user.internalUserId,
+    }
 
-  async updateSettings(id: string, data: UpdateSettingsDTO): Promise<Setting> {
+    if (!settings) {
+      return await this.db.setting.create({ data })
+    }
+
     return await this.db.setting.update({
-      where: { id },
+      where: { id: settings.id },
       data,
     })
   }
