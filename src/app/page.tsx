@@ -31,7 +31,7 @@ export default function Home() {
             <Selecter defaultValue="hari" options={dummyFallbackSenders} />
           </div>
           <div>
-            <Label>Bidirectional Slack sync</Label>
+            <Label>Slack channel prefix</Label>
             <TextInput placeholder="copilot" />
           </div>
         </FormBox>
