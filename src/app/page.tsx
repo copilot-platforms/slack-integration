@@ -11,20 +11,24 @@ import { DefaultSetting } from '@/types/settings'
 import { runSync as runSyncAction, fetchSettings, getInternalUsersOptions, getUserPayload } from '@/actions/settings'
 
 export default async function Home({ searchParams }: { searchParams: { token: string } }) {
-  const { success: tokenParseSuccess, data: token } = z.string().safeParse(searchParams.token)
-  if (!tokenParseSuccess) {
+  const tokenParsed = z.string().safeParse(searchParams.token)
+  if (!tokenParsed.success) {
     // TODO: fix in dedicated PR
     return <div>Please provide a valid token</div>
   }
 
+  const token = tokenParsed.data
   const copilot = new CopilotAPI(token)
-  const currentUser = await getUserPayload(copilot)
+  const [currentUser, internalUsers, settingsData] = await Promise.all([
+    getUserPayload(copilot),
+    getInternalUsersOptions(copilot),
+    fetchSettings(token),
+  ])
   if (!currentUser) {
     // TODO: fix in dedicated PR
     return <div>Failed to validate internal user</div>
   }
 
-  const [internalUsers, settingsData] = await Promise.all([getInternalUsersOptions(copilot), fetchSettings(token)])
   const settings: Setting | DefaultSetting = settingsData || getDefaultSettings(currentUser.internalUserId)
 
   const runSync = async (formData: FormData) => {
