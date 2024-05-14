@@ -24,13 +24,14 @@ const StyledSelecter = styled(Select)(({ theme }) => ({
 }))
 
 interface SelecterProps {
+  name: string
   defaultValue: string
   options: { label: string; value: string }[]
 }
 
-export const Selecter = ({ defaultValue, options }: SelecterProps) => {
+export const Selecter = ({ name, defaultValue, options }: SelecterProps) => {
   return (
-    <StyledSelecter defaultValue={defaultValue} IconComponent={DropdownIcon}>
+    <StyledSelecter defaultValue={defaultValue} IconComponent={DropdownIcon} name={name}>
       {options.map(({ label, value }) => (
         <MenuItem value={value} key={label}>
           <Typography variant="md" fontWeight={400}>
