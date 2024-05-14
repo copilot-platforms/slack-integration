@@ -3,9 +3,31 @@ import { PageContainer } from '@/components/Containers'
 import { Heading, SubHeading } from '@/components/Typography'
 import { FormBox, Label, TextInput, Selecter } from '@/components/FormElements'
 import { Box } from '@mui/material'
-import { ConfigurationOption, SyncOption, dummyFallbackSenders, syncConfigurationOptions, syncOptions } from '@/app/helpers'
+import { SyncOption, getDefaultSettings, syncConfigurationOptions, syncOptions } from '@/app/helpers'
+import { z } from 'zod'
+import { fetchSettings, getInternalUsersOptions, getUserPayload } from '@/actions/settings'
+import { Setting } from '@prisma/client'
+import { CopilotAPI } from '@/utils/CopilotAPI'
+import { DefaultSetting } from '@/types/settings'
 
-export default function Home() {
+export default async function Home({ searchParams }: { searchParams: { token: string } }) {
+  const { success: tokenParseSuccess, data: token } = z.string().safeParse(searchParams.token)
+  if (!tokenParseSuccess) {
+    // TODO: fix in another PR
+    return <div>Please provide a valid token</div>
+  }
+
+  const copilot = new CopilotAPI(token)
+  const currentUser = await getUserPayload(copilot)
+  if (!currentUser) {
+    // TODO: fix in another PR
+    return <div>Failed to parse token payload</div>
+  }
+
+  const internalUsers = await getInternalUsersOptions(copilot)
+
+  const settings: Setting | DefaultSetting = (await fetchSettings(token)) || getDefaultSettings(currentUser.internalUserId)
+
   return (
     <PageContainer>
       <Box id="slack-sync" mb={'38px'}>
@@ -14,7 +36,11 @@ export default function Home() {
         <FormBox>
           <div>
             <Label>Bidirectional Slack sync</Label>
-            <Selecter defaultValue={SyncOption.Off} options={syncOptions} />
+            <Selecter
+              name="bidirectionalSlackSync"
+              defaultValue={settings.bidirectionalSlackSync ? SyncOption.On : SyncOption.Off}
+              options={syncOptions}
+            />
           </div>
         </FormBox>
       </Box>
@@ -24,15 +50,19 @@ export default function Home() {
         <FormBox>
           <div>
             <Label>Channels to sync</Label>
-            <Selecter defaultValue={ConfigurationOption.ClientAndCompany} options={syncConfigurationOptions} />
+            <Selecter name="channelsToSync" defaultValue={settings.channelsToSync} options={syncConfigurationOptions} />
           </div>
           <div>
             <Label>Fallback message sender</Label>
-            <Selecter defaultValue="hari" options={dummyFallbackSenders} />
+            <Selecter
+              name="fallbackMessageSenderId"
+              defaultValue={settings.fallbackMessageSenderId}
+              options={internalUsers}
+            />
           </div>
           <div>
             <Label>Slack channel prefix</Label>
-            <TextInput placeholder="copilot" />
+            <TextInput name="slackChannelPrefix" placeholder="copilot" />
           </div>
         </FormBox>
       </Box>
