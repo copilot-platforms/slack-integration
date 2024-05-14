@@ -10,15 +10,16 @@ CREATE TABLE "Settings" (
     "fallbackMessageSenderId" UUID NOT NULL,
     "slackChannelPrefix" VARCHAR(255) NOT NULL,
     "isSyncing" BOOLEAN NOT NULL DEFAULT false,
-    "syncedById" UUID,
+    "internalUserId" UUID,
     "lastSyncedAt" TIMESTAMP(3),
-    "deletedAt" TIMESTAMP(3),
+    "createdAt" TIMESTAMP(3) NOT NULL,
+    "updatedAt" TIMESTAMP(3),
 
     CONSTRAINT "Settings_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateIndex
-CREATE INDEX "IX_Settings_workspaceId_deletedAt" ON "Settings"("workspaceId", "deletedAt");
+CREATE INDEX "IX_Settings_workspaceId_deletedAt" ON "Settings"("workspaceId");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "Settings_workspaceId_deletedAt_key" ON "Settings"("workspaceId", "deletedAt");
+CREATE UNIQUE INDEX "Settings_workspaceId_key" ON "Settings"("workspaceId");

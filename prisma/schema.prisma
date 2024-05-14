@@ -13,19 +13,30 @@ enum ChannelSyncOptions {
   // In the future we might support client only or company only
 }
 
+/// Settings model to store an Internal User's Sync settings from UI
 model Setting {
   id                      String             @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   workspaceId             String             @db.VarChar(32)
+  /// Option to syncronize message and channels in both slack and copilot
   bidirectionalSlackSync  Boolean            @default(false)
+  /// Option to sync only Client, Company or Both  
   channelsToSync          ChannelSyncOptions @default(clientAndCompany)
+  /// Internal User id to send the message in case sender cannot be deduced
   fallbackMessageSenderId String             @db.Uuid
+  /// Prefix to add to synced channels.
+  /// E.g. copilot-john-doe for client channel
   slackChannelPrefix      String             @db.VarChar(255)
+  /// Whether or not "Run Sync" button is clicked
   isSyncing               Boolean            @default(false)
-  syncedById              String?            @db.Uuid
+  /// ID of the Internal User who installed Slack Integration and clicked on Run Sync
+  internalUserId          String?            @db.Uuid
+  /// Timestamp when "Run Sync" was last clicked
   lastSyncedAt            DateTime?
-  deletedAt               DateTime?
+  /// Last created / last updated Timestamps
+  createdAt               DateTime
+  updatedAt               DateTime?
 
-  @@unique([workspaceId, deletedAt], name: "UQ_Settings_workspaceId_deletedAt")
-  @@index([workspaceId, deletedAt], name: "IX_Settings_workspaceId_deletedAt")
+  @@unique([workspaceId], name: "UQ_Settings_workspaceId_deletedAt")
+  @@index([workspaceId], name: "IX_Settings_workspaceId_deletedAt")
   @@map("Settings")
 }
