@@ -53,7 +53,7 @@ export class CopilotAPI {
     return WorkspaceResponseSchema.parse(await this.copilot.retrieveWorkspace())
   }
 
-  async getIUTokenPayload(): Promise<InternalUserToken | null> {
+  async getInternalUserTokenPayload(): Promise<InternalUserToken | null> {
     const tokenPayload = await this.getTokenPayload()
     const payload = InternalUserTokenSchema.safeParse(tokenPayload)
     return payload.data ?? null
