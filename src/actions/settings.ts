@@ -1,8 +1,11 @@
 'use server'
 
+import { SyncOption } from '@/app/helpers'
 import { apiUrl } from '@/config'
 import { InternalUserToken } from '@/types/common'
+import { CreateUpdateSettingsSchema } from '@/types/dtos/settings.dto'
 import { CopilotAPI } from '@/utils/CopilotAPI'
+import { formDataToObject } from '@/utils/formData'
 import { Setting } from '@prisma/client'
 
 export const fetchSettings = async (token: string): Promise<Setting | null> => {
@@ -21,4 +24,16 @@ export const getInternalUsersOptions = async (copilot: CopilotAPI): Promise<{ la
 
 export const getUserPayload = async (copilot: CopilotAPI): Promise<InternalUserToken | null> => {
   return await copilot.getInternalUserTokenPayload()
+}
+
+export const runSync = async (formData: FormData, token: string) => {
+  let data = formDataToObject(formData)
+  data = {
+    ...data,
+    bidirectionalSlackSync: data.bidirectionalSlackSync === SyncOption.On,
+    isSyncing: true, // because we have clicked on Run Sync
+  }
+  const reqBody = CreateUpdateSettingsSchema.parse(data)
+  const response = await fetch(`${apiUrl}/api/settings?token=${token}`, { method: 'POST', body: JSON.stringify(reqBody) })
+  return await response.json()
 }
