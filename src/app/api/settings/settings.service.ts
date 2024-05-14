@@ -18,12 +18,12 @@ export class SettingsService extends BaseService {
     }
 
     if (!settings) {
-      return await this.db.setting.create({ data })
+      return await this.db.setting.create({ data: { ...data, createdAt: new Date() } })
     }
 
     return await this.db.setting.update({
       where: { id: settings.id },
-      data,
+      data: { ...data, updatedAt: new Date() },
     })
   }
 }
