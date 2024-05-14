@@ -14,6 +14,19 @@ export const InternalUserTokenSchema = z.object({
 })
 export type InternalUserToken = z.infer<typeof InternalUserTokenSchema>
 
+export const InternalUsersSchema = z.object({
+  id: z.string().uuid(),
+  givenName: z.string(),
+  familyName: z.string(),
+  email: z.string().email(),
+})
+export type InternalUsers = z.infer<typeof InternalUsersSchema>
+
+export const InternalUsersResponseSchema = z.object({
+  data: z.array(InternalUsersSchema),
+})
+export type InternalUsersResponse = z.infer<typeof InternalUsersResponseSchema>
+
 export const ClientTokenSchema = z.object({
   clientId: z.string(),
   companyId: z.string().optional(),
