@@ -2,6 +2,7 @@
 
 import { MenuItem, Select, Typography, styled } from '@mui/material'
 import DropdownIcon from '@/components/Icons/DropdownArrow'
+import { SelecterOption } from '@/types/settings'
 
 const StyledSelecter = styled(Select)(({ theme }) => ({
   display: 'block',
@@ -26,7 +27,7 @@ const StyledSelecter = styled(Select)(({ theme }) => ({
 interface SelecterProps {
   name: string
   defaultValue: string
-  options: { label: string; value: string }[]
+  options: SelecterOption[]
 }
 
 export const Selecter = ({ name, defaultValue, options }: SelecterProps) => {

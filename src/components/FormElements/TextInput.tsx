@@ -38,8 +38,9 @@ export const StyledTextInput = styled(TextField, {
 interface TextInputProps {
   name: string
   placeholder?: string
+  errorText?: string
 }
 
-export const TextInput = ({ name, placeholder }: TextInputProps) => {
-  return <StyledTextInput fullWidth name={name} placeholder={placeholder} />
+export const TextInput = ({ name, placeholder, errorText }: TextInputProps) => {
+  return <StyledTextInput fullWidth name={name} placeholder={placeholder} error={!!errorText} helperText={errorText} />
 }

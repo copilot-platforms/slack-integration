@@ -1,4 +1,4 @@
-import { DefaultSetting } from '@/types/settings'
+import { DefaultSetting, SelecterOption } from '@/types/settings'
 import { ChannelSyncOptions } from '@prisma/client'
 
 export enum SyncOption {
@@ -6,12 +6,12 @@ export enum SyncOption {
   Off = 'off',
 }
 
-export const syncOptions = [
+export const syncOptions: SelecterOption[] = [
   { label: 'Off', value: SyncOption.Off },
   { label: 'On', value: SyncOption.On },
 ]
 
-export const syncConfigurationOptions = [
+export const syncConfigurationOptions: SelecterOption[] = [
   { label: 'Client channels and company channels', value: ChannelSyncOptions.clientAndCompany },
 ]
 

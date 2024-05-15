@@ -4,6 +4,7 @@ import { SyncOption } from '@/app/helpers'
 import { apiUrl } from '@/config'
 import { InternalUserToken } from '@/types/common'
 import { CreateUpdateSettingsSchema } from '@/types/dtos/settings.dto'
+import { SelecterOption } from '@/types/settings'
 import { CopilotAPI } from '@/utils/CopilotAPI'
 import { formDataToObject } from '@/utils/formData'
 import { Setting } from '@prisma/client'
@@ -14,7 +15,7 @@ export const fetchSettings = async (token: string): Promise<Setting | null> => {
   return settings.data
 }
 
-export const getInternalUsersOptions = async (copilot: CopilotAPI): Promise<{ label: string; value: string }[]> => {
+export const getInternalUsersOptions = async (copilot: CopilotAPI): Promise<SelecterOption[]> => {
   const internalUsers = await copilot.getInternalUsers()
   return internalUsers.data.map((internalUser) => ({
     label: `${internalUser.givenName} ${internalUser.familyName}`,
@@ -33,7 +34,15 @@ export const runSync = async (formData: FormData, token: string) => {
     bidirectionalSlackSync: data.bidirectionalSlackSync === SyncOption.On,
     isSyncing: true, // because we have clicked on Run Sync
   }
-  const reqBody = CreateUpdateSettingsSchema.parse(data)
-  const response = await fetch(`${apiUrl}/api/settings?token=${token}`, { method: 'POST', body: JSON.stringify(reqBody) })
+
+  const reqBody = CreateUpdateSettingsSchema.safeParse(data)
+  if (!reqBody.success) {
+    return { errors: reqBody.error.format() }
+  }
+
+  const response = await fetch(`${apiUrl}/api/settings?token=${token}`, {
+    method: 'POST',
+    body: JSON.stringify(reqBody.data),
+  })
   return await response.json()
 }
