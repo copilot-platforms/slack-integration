@@ -29,7 +29,7 @@ export default async function Home({ searchParams }: { searchParams: { token: st
 
   const settings: Setting | DefaultSetting = settingsData || getDefaultSettings(currentUser.internalUserId)
 
-  const runSync = async (prevState: unknown, formData: FormData) => {
+  const runSync = async (_prevState: unknown, formData: FormData) => {
     'use server'
     return await runSyncAction(formData, token)
   }

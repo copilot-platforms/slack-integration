@@ -13,7 +13,7 @@ import { getFirstErrorMessage } from '@/utils/zod'
 interface SyncFormProps {
   settings: Setting | DefaultSetting
   internalUsers: SelecterOption[]
-  runSync: (_: unknown, formData: FormData) => Promise<any>
+  runSync: (prevState: unknown, formData: FormData) => Promise<any>
 }
 
 export const SyncForm = ({ runSync, settings, internalUsers }: SyncFormProps) => {
