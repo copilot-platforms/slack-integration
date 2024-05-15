@@ -36,7 +36,7 @@ export default async function Home({ searchParams }: { searchParams: { token: st
 
   return (
     <PageContainer>
-      <SyncForm settings={settings} internalUsers={internalUsers} runSync={runSync} />
+      <SyncForm token={token} settings={settings} internalUsers={internalUsers} runSync={runSync} />
     </PageContainer>
   )
 }

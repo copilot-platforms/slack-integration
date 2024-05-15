@@ -9,14 +9,16 @@ import { DefaultSetting, SelecterOption } from '@/types/settings'
 import { Setting } from '@prisma/client'
 import { useFormState } from 'react-dom'
 import { getFirstErrorMessage } from '@/utils/zod'
+import { updateBidirectionalSync } from '@/actions/settings'
 
 interface SyncFormProps {
+  token: string
   settings: Setting | DefaultSetting
   internalUsers: SelecterOption[]
   runSync: (prevState: unknown, formData: FormData) => Promise<any>
 }
 
-export const SyncForm = ({ runSync, settings, internalUsers }: SyncFormProps) => {
+export const SyncForm = ({ token, runSync, settings, internalUsers }: SyncFormProps) => {
   const [formState, action] = useFormState(runSync, {})
   return (
     <form action={action}>
@@ -30,6 +32,7 @@ export const SyncForm = ({ runSync, settings, internalUsers }: SyncFormProps) =>
               name="bidirectionalSlackSync"
               defaultValue={settings.bidirectionalSlackSync ? SyncOption.On : SyncOption.Off}
               options={syncOptions}
+              handleChange={(e) => updateBidirectionalSync(e.target.value as SyncOption, token)}
             />
           </div>
         </FormBox>
@@ -40,7 +43,12 @@ export const SyncForm = ({ runSync, settings, internalUsers }: SyncFormProps) =>
         <FormBox>
           <div>
             <Label>Channels to sync</Label>
-            <Selecter name="channelsToSync" defaultValue={settings.channelsToSync} options={syncConfigurationOptions} />
+            <Selecter
+              name="channelsToSync"
+              defaultValue={settings.channelsToSync}
+              options={syncConfigurationOptions}
+              disabled={settings.isSyncing}
+            />
           </div>
           <div>
             <Label>Fallback message sender</Label>
@@ -48,6 +56,7 @@ export const SyncForm = ({ runSync, settings, internalUsers }: SyncFormProps) =>
               name="fallbackMessageSenderId"
               defaultValue={settings.fallbackMessageSenderId}
               options={internalUsers}
+              disabled={settings.isSyncing}
             />
           </div>
           <div>
@@ -57,6 +66,7 @@ export const SyncForm = ({ runSync, settings, internalUsers }: SyncFormProps) =>
               placeholder="copilot"
               // Show first prioritized error
               errorText={getFirstErrorMessage(formState?.errors, 'slackChannelPrefix')}
+              disabled={settings.isSyncing}
             />
           </div>
         </FormBox>
@@ -67,7 +77,9 @@ export const SyncForm = ({ runSync, settings, internalUsers }: SyncFormProps) =>
           If you already have channels in your Messages App, run this sync to create them all in Slack. Note that this will
           create a Slack channel for every single channels in the Messages App and may take several minutes.
         </SubHeading>
-        <PrimaryBtn type="submit">Run Sync</PrimaryBtn>
+        <PrimaryBtn type="submit" disabled={settings.isSyncing}>
+          Run Sync
+        </PrimaryBtn>
       </Box>
     </form>
   )

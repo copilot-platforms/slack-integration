@@ -1,6 +1,6 @@
 'use client'
 
-import { MenuItem, Select, Typography, styled } from '@mui/material'
+import { MenuItem, Select, SelectChangeEvent, Typography, styled } from '@mui/material'
 import DropdownIcon from '@/components/Icons/DropdownArrow'
 import { SelecterOption } from '@/types/settings'
 
@@ -28,11 +28,19 @@ interface SelecterProps {
   name: string
   defaultValue: string
   options: SelecterOption[]
+  handleChange?: (e: SelectChangeEvent<unknown>) => void
+  disabled?: boolean
 }
 
-export const Selecter = ({ name, defaultValue, options }: SelecterProps) => {
+export const Selecter = ({ name, defaultValue, options, handleChange, disabled = false }: SelecterProps) => {
   return (
-    <StyledSelecter defaultValue={defaultValue} IconComponent={DropdownIcon} name={name}>
+    <StyledSelecter
+      defaultValue={defaultValue}
+      IconComponent={DropdownIcon}
+      name={name}
+      disabled={disabled}
+      onChange={handleChange}
+    >
       {options.map(({ label, value }) => (
         <MenuItem value={value} key={label}>
           <Typography variant="md" fontWeight={400}>

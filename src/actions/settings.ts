@@ -46,3 +46,11 @@ export const runSync = async (formData: FormData, token: string) => {
   })
   return await response.json()
 }
+
+export const updateBidirectionalSync = async (data: SyncOption, token: string) => {
+  const response = await fetch(`${apiUrl}/api/settings?token=${token}`, {
+    method: 'PATCH',
+    body: JSON.stringify({ bidirectionalSlackSync: data === SyncOption.On }),
+  })
+  return await response.json()
+}

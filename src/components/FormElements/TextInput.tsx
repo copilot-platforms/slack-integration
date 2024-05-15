@@ -39,8 +39,18 @@ interface TextInputProps {
   name: string
   placeholder?: string
   errorText?: string
+  disabled?: boolean
 }
 
-export const TextInput = ({ name, placeholder, errorText }: TextInputProps) => {
-  return <StyledTextInput fullWidth name={name} placeholder={placeholder} error={!!errorText} helperText={errorText} />
+export const TextInput = ({ name, placeholder, errorText, disabled = false }: TextInputProps) => {
+  return (
+    <StyledTextInput
+      fullWidth
+      name={name}
+      placeholder={placeholder}
+      error={!!errorText}
+      helperText={errorText}
+      disabled={disabled}
+    />
+  )
 }

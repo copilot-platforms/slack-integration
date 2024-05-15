@@ -9,3 +9,8 @@ export const CreateUpdateSettingsSchema = z.object({
   isSyncing: z.boolean(),
 })
 export type CreateUpdateSettingsDTO = z.infer<typeof CreateUpdateSettingsSchema>
+
+export const PatchUpdateSettingsSchema = z.object({
+  bidirectionalSlackSync: z.boolean(),
+})
+export type PatchUpdateSettings = z.infer<typeof PatchUpdateSettingsSchema>
