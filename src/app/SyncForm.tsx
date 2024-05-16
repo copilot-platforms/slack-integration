@@ -3,12 +3,11 @@
 import { PrimaryBtn } from '@/components/Buttons'
 import { Heading, SubHeading } from '@/components/Typography'
 import { FormBox, Label, TextInput, Selecter } from '@/components/FormElements'
-import { Box } from '@mui/material'
+import { Box, Typography } from '@mui/material'
 import { SyncOption, syncConfigurationOptions, syncOptions } from '@/app/helpers'
 import { DefaultSetting, SelecterOption } from '@/types/settings'
 import { Setting } from '@prisma/client'
 import { useFormState } from 'react-dom'
-import { getFirstErrorMessage } from '@/utils/zod'
 import { updateBidirectionalSync } from '@/actions/settings'
 
 interface SyncFormProps {
@@ -26,7 +25,7 @@ export const SyncForm = ({ token, runSync, settings, internalUsers }: SyncFormPr
       <Box id="slack-sync" mb={'38px'}>
         <Heading>Slack sync</Heading>
         <SubHeading>When enabled, Messages App channels and Slack channels will be synced</SubHeading>
-        <FormBox>
+        <FormBox gap="4px">
           <div>
             <Label>Bidirectional Slack sync</Label>
             <Selecter
@@ -36,6 +35,13 @@ export const SyncForm = ({ token, runSync, settings, internalUsers }: SyncFormPr
               handleChange={(e) => updateBidirectionalSync(e.target.value as SyncOption, token)}
             />
           </div>
+          {!settings.isSyncing && !settings.bidirectionalSlackSync ? (
+            <Typography variant="sm" sx={{ display: 'block', color: 'rgb(211, 47, 47)', mb: '4px', fontWeight: 400 }}>
+              Bidirectional slack sync must be turned on before running sync
+            </Typography>
+          ) : (
+            <></>
+          )}
         </FormBox>
       </Box>
       <Box id="slack-sync" mb={'64px'}>
@@ -79,11 +85,7 @@ export const SyncForm = ({ token, runSync, settings, internalUsers }: SyncFormPr
           If you already have channels in your Messages App, run this sync to create them all in Slack. Note that this will
           create a Slack channel for every single channels in the Messages App and may take several minutes.
         </SubHeading>
-        {!settings.isSyncing && !settings.bidirectionalSlackSync ? (
-          <div>You need to turn on Bidirectional slack sync</div>
-        ) : (
-          <></>
-        )}
+
         <PrimaryBtn type="submit" disabled={settings.isSyncing}>
           Run Sync
         </PrimaryBtn>

@@ -5,6 +5,10 @@ import { TextField, styled } from '@mui/material'
 export const StyledTextInput = styled(TextField, {
   shouldForwardProp: (prop) => prop !== 'padding',
 })(({ theme }) => ({
+  '.Mui-error': {
+    marginLeft: 0,
+    marginTop: '4px',
+  },
   '& .MuiTextField-root': {
     width: '100%',
   },
