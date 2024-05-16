@@ -37,12 +37,13 @@ export const StyledTextInput = styled(TextField, {
 
 interface TextInputProps {
   name: string
+  defaultValue?: string
   placeholder?: string
   errorText?: string
   disabled?: boolean
 }
 
-export const TextInput = ({ name, placeholder, errorText, disabled = false }: TextInputProps) => {
+export const TextInput = ({ name, defaultValue, placeholder, errorText, disabled = false }: TextInputProps) => {
   return (
     <StyledTextInput
       fullWidth
@@ -51,6 +52,7 @@ export const TextInput = ({ name, placeholder, errorText, disabled = false }: Te
       error={!!errorText}
       helperText={errorText}
       disabled={disabled}
+      defaultValue={defaultValue}
     />
   )
 }

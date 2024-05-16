@@ -20,6 +20,7 @@ interface SyncFormProps {
 
 export const SyncForm = ({ token, runSync, settings, internalUsers }: SyncFormProps) => {
   const [formState, action] = useFormState(runSync, {})
+
   return (
     <form action={action}>
       <Box id="slack-sync" mb={'38px'}>
@@ -64,8 +65,9 @@ export const SyncForm = ({ token, runSync, settings, internalUsers }: SyncFormPr
             <TextInput
               name="slackChannelPrefix"
               placeholder="copilot"
+              defaultValue={settings.slackChannelPrefix}
               // Show first prioritized error
-              errorText={getFirstErrorMessage(formState?.errors, 'slackChannelPrefix')}
+              errorText={formState?.errors?.slackChannelPrefix}
               disabled={settings.isSyncing}
             />
           </div>
@@ -77,6 +79,11 @@ export const SyncForm = ({ token, runSync, settings, internalUsers }: SyncFormPr
           If you already have channels in your Messages App, run this sync to create them all in Slack. Note that this will
           create a Slack channel for every single channels in the Messages App and may take several minutes.
         </SubHeading>
+        {!settings.isSyncing && !settings.bidirectionalSlackSync ? (
+          <div>You need to turn on Bidirectional slack sync</div>
+        ) : (
+          <></>
+        )}
         <PrimaryBtn type="submit" disabled={settings.isSyncing}>
           Run Sync
         </PrimaryBtn>

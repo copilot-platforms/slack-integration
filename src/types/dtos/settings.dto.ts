@@ -10,6 +10,8 @@ export const CreateUpdateSettingsSchema = z.object({
 })
 export type CreateUpdateSettingsDTO = z.infer<typeof CreateUpdateSettingsSchema>
 
+export type SettingsFormFields = keyof CreateUpdateSettingsDTO
+
 export const PatchUpdateSettingsSchema = z.object({
   bidirectionalSlackSync: z.boolean(),
 })
