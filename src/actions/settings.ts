@@ -31,7 +31,13 @@ export const getUserPayload = async (copilot: CopilotAPI): Promise<InternalUserT
   return await copilot.getInternalUserTokenPayload()
 }
 
-export const runSync = async (formData: FormData, token: string) => {
+export const runSync = async (
+  formData: FormData,
+  token: string,
+): Promise<{
+  errors?: Record<string, string>
+  data?: Setting
+}> => {
   let data = formDataToObject(formData)
   data = {
     ...data,
