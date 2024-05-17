@@ -4,10 +4,11 @@ import { Stack } from '@mui/material'
 import { ReactNode } from 'react'
 
 interface FormProps {
+  gap?: string
   children: ReactNode
 }
 
-export const FormBox = ({ children }: FormProps) => {
+export const FormBox = ({ gap, children }: FormProps) => {
   return (
     <Stack
       spacing={'24px'}
