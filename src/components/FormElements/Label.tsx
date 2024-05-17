@@ -1,4 +1,4 @@
-import { FormLabel, Typography } from '@mui/material'
+import { FormLabel, Typography, Box } from '@mui/material'
 
 interface LabelProps {
   children: string
@@ -6,10 +6,10 @@ interface LabelProps {
 
 export const Label = ({ children }: LabelProps) => {
   return (
-    <FormLabel>
-      <Typography variant="md" sx={{ mb: '4px', display: 'block' }}>
-        {children}
-      </Typography>
-    </FormLabel>
+    <Box mb="4px">
+      <FormLabel>
+        <Typography variant="bodyMd">{children}</Typography>
+      </FormLabel>
+    </Box>
   )
 }

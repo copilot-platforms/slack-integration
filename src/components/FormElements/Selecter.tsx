@@ -43,9 +43,7 @@ export const Selecter = ({ name, defaultValue, options, handleChange, disabled =
     >
       {options.map(({ label, value }) => (
         <MenuItem value={value} key={label}>
-          <Typography variant="md" fontWeight={400}>
-            {label}
-          </Typography>
+          <Typography variant="bodyMd">{label}</Typography>
         </MenuItem>
       ))}
     </StyledSelecter>

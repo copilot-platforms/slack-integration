@@ -1,4 +1,4 @@
-import { Typography } from '@mui/material'
+import { Typography, Box } from '@mui/material'
 
 interface HeadingProps {
   children: string
@@ -6,8 +6,8 @@ interface HeadingProps {
 
 export const Heading = ({ children }: HeadingProps) => {
   return (
-    <Typography variant="xl" sx={{ display: 'block' }}>
-      {children}
-    </Typography>
+    <Box>
+      <Typography variant="xl">{children}</Typography>
+    </Box>
   )
 }
