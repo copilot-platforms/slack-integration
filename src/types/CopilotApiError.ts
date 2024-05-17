@@ -1,6 +1,8 @@
-export declare class CopilotApiError extends Error {
-  readonly status: number
-  readonly body: {
-    message: string
+export class CopilotApiError extends Error {
+  constructor(
+    public readonly status: number,
+    public readonly body: { message: string },
+  ) {
+    super(body.message)
   }
 }
