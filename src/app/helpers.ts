@@ -1,22 +1,26 @@
+import { DefaultSetting, SelecterOption } from '@/types/settings'
+import { ChannelSyncOptions } from '@prisma/client'
+
 export enum SyncOption {
   On = 'on',
   Off = 'off',
 }
 
-export enum ConfigurationOption {
-  ClientAndCompany = 'clientAndCompany', // TODO: Replace with one from `schema.prisma` after it is merged
-}
-
-export const syncOptions = [
+export const syncOptions: SelecterOption[] = [
   { label: 'Off', value: SyncOption.Off },
   { label: 'On', value: SyncOption.On },
 ]
 
-export const syncConfigurationOptions = [
-  { label: 'Client channels and company channels', value: ConfigurationOption.ClientAndCompany },
+export const syncConfigurationOptions: SelecterOption[] = [
+  { label: 'Client channels and company channels', value: ChannelSyncOptions.clientAndCompany },
 ]
 
-export const dummyFallbackSenders = [
-  { label: 'Hari Bahadur', value: 'hari' },
-  { label: 'Ram Bahadur', value: 'ram' },
-]
+export const getDefaultSettings = (fallbackMessageSenderId: string): DefaultSetting => {
+  return {
+    bidirectionalSlackSync: false,
+    channelsToSync: ChannelSyncOptions.clientAndCompany,
+    fallbackMessageSenderId,
+    isSyncing: false,
+    slackChannelPrefix: '',
+  }
+}

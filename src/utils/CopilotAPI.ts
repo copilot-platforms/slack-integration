@@ -19,6 +19,8 @@ import {
   TokenSchema,
   InternalUserTokenSchema,
   InternalUserToken,
+  InternalUsersResponse,
+  InternalUsersResponseSchema,
 } from '@/types/common'
 import { copilotAPIKey as apiKey } from '@/config'
 
@@ -53,7 +55,7 @@ export class CopilotAPI {
     return WorkspaceResponseSchema.parse(await this.copilot.retrieveWorkspace())
   }
 
-  async getIUTokenPayload(): Promise<InternalUserToken | null> {
+  async getInternalUserTokenPayload(): Promise<InternalUserToken | null> {
     const tokenPayload = await this.getTokenPayload()
     const payload = InternalUserTokenSchema.safeParse(tokenPayload)
     return payload.data ?? null
@@ -82,5 +84,9 @@ export class CopilotAPI {
 
   async getCustomFields(): Promise<CustomFieldResponse> {
     return CustomFieldResponseSchema.parse(await this.copilot.listCustomFields())
+  }
+
+  async getInternalUsers(): Promise<InternalUsersResponse> {
+    return InternalUsersResponseSchema.parse(await this.copilot.listInternalUsers({}))
   }
 }
