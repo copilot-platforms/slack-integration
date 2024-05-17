@@ -11,9 +11,9 @@ export const StyledSubheading = styled(Typography)(({ theme }) => ({
   color: theme.color.gray[500],
 }))
 
-export const SubHeading = ({ children }: SubHeadingProps) => {
+export const SubHeading = ({ pb, children }: SubHeadingProps) => {
   return (
-    <Box>
+    <Box pb={pb}>
       <StyledSubheading variant="bodyLg">{children}</StyledSubheading>
     </Box>
   )
