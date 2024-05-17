@@ -1,16 +1,20 @@
 'use client'
 
-import { Typography, styled } from '@mui/material'
+import { Typography, styled, Box } from '@mui/material'
 
 interface SubHeadingProps {
   pb?: string
   children: string
 }
 
-export const SubHeading = ({ pb, children }: SubHeadingProps) => {
+export const StyledSubheading = styled(Typography)(({ theme }) => ({
+  color: theme.color.gray[500],
+}))
+
+export const SubHeading = ({ children }: SubHeadingProps) => {
   return (
-    <Typography variant="lg" display={'block'} sx={(theme) => ({ color: theme.color.gray[500], fontWeight: 400, pb })}>
-      {children}
-    </Typography>
+    <Box>
+      <StyledSubheading variant="bodyLg">{children}</StyledSubheading>
+    </Box>
   )
 }
