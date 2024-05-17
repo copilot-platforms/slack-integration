@@ -87,7 +87,7 @@ export const SyncForm = ({ token, runSync, settings, internalUsers }: SyncFormPr
         </SubHeading>
 
         <PrimaryBtn type="submit" disabled={settings.isSyncing}>
-          Run Sync
+          {settings.isSyncing ? 'Running sync' : 'Run sync'}
         </PrimaryBtn>
       </Box>
     </form>
