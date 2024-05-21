@@ -33,7 +33,6 @@ export const patchSettings = async (req: NextRequest) => {
   const user = await User.authenticate(req)
 
   const body = PatchUpdateSettingsSchema.parse(await req.json())
-  console.log(body)
   const settingsService = new SettingsService(user)
   const data = await settingsService.partialUpdateSettings(body)
 

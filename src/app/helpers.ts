@@ -20,7 +20,7 @@ export const getDefaultSettings = (fallbackMessageSenderId: string): DefaultSett
     bidirectionalSlackSync: false,
     channelsToSync: ChannelSyncOptions.clientAndCompany,
     fallbackMessageSenderId,
-    isSyncing: false,
+    isSyncRunning: false,
     slackChannelPrefix: '',
   }
 }

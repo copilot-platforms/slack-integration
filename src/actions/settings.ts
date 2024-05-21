@@ -42,7 +42,7 @@ export const runSync = async (
   data = {
     ...data,
     bidirectionalSlackSync: data.bidirectionalSlackSync === SyncOption.On,
-    isSyncing: true, // because we have clicked on Run Sync
+    isSyncRunning: true, // because we have clicked on Run Sync
   }
 
   const reqBody = CreateUpdateSettingsSchema.safeParse(data)

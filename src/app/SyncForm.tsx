@@ -35,7 +35,7 @@ export const SyncForm = ({ token, runSync, settings, internalUsers }: SyncFormPr
               handleChange={(e) => updateBidirectionalSync(e.target.value as SyncOption, token)}
             />
           </div>
-          {!settings.isSyncing && !settings.bidirectionalSlackSync ? (
+          {!settings.isSyncRunning && !settings.bidirectionalSlackSync ? (
             <Typography variant="sm" sx={{ display: 'block', color: 'rgb(211, 47, 47)', mb: '4px', fontWeight: 400 }}>
               Bidirectional slack sync must be turned on before running sync
             </Typography>
@@ -54,7 +54,7 @@ export const SyncForm = ({ token, runSync, settings, internalUsers }: SyncFormPr
               name="channelsToSync"
               defaultValue={settings.channelsToSync}
               options={syncConfigurationOptions}
-              disabled={settings.isSyncing}
+              disabled={settings.isSyncRunning}
             />
           </div>
           <div>
@@ -63,7 +63,7 @@ export const SyncForm = ({ token, runSync, settings, internalUsers }: SyncFormPr
               name="fallbackMessageSenderId"
               defaultValue={settings.fallbackMessageSenderId}
               options={internalUsers}
-              disabled={settings.isSyncing}
+              disabled={settings.isSyncRunning}
             />
           </div>
           <div>
@@ -74,7 +74,7 @@ export const SyncForm = ({ token, runSync, settings, internalUsers }: SyncFormPr
               defaultValue={settings.slackChannelPrefix}
               // Show first prioritized error
               errorText={formState?.errors?.slackChannelPrefix}
-              disabled={settings.isSyncing}
+              disabled={settings.isSyncRunning}
             />
           </div>
         </FormBox>
@@ -86,7 +86,7 @@ export const SyncForm = ({ token, runSync, settings, internalUsers }: SyncFormPr
           create a Slack channel for every single channels in the Messages App and may take several minutes.
         </SubHeading>
 
-        <PrimaryBtn type="submit" disabled={settings.isSyncing}>
+        <PrimaryBtn type="submit" disabled={settings.isSyncRunning}>
           Run Sync
         </PrimaryBtn>
       </Box>
