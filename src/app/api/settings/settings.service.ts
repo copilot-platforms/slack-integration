@@ -39,7 +39,7 @@ export class SettingsService extends BaseService {
       data: {
         ...newData,
         // If sync is currently running and user toggles bidirectional slack sync to off, turn off sync
-        isSyncRunning: settings.isSyncRunning ? newData.bidirectionalSlackSync : settings.isSyncRunning,
+        isSyncRunning: settings.isSyncRunning && newData.bidirectionalSlackSync,
       },
     })
   }
