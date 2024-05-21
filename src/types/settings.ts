@@ -2,7 +2,7 @@ import { Setting } from '@prisma/client'
 
 export type DefaultSetting = Omit<
   Setting,
-  'id' | 'createdAt' | 'updatedAt' | 'workspaceId' | 'internalUserId' | 'lastSyncedAt'
+  'id' | 'createdAt' | 'updatedAt' | 'workspaceId' | 'lastSyncedById' | 'lastSyncedAt'
 >
 
 export type SelecterOption = {

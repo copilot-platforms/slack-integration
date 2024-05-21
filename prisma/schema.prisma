@@ -27,14 +27,14 @@ model Setting {
   /// E.g. copilot-john-doe for client channel
   slackChannelPrefix      String             @db.VarChar(255)
   /// Whether or not "Run Sync" button is clicked
-  isSyncing               Boolean            @default(false)
-  /// ID of the Internal User who installed Slack Integration and clicked on Run Sync
-  internalUserId          String?            @db.Uuid
+  isSyncRunning           Boolean            @default(false)
+  /// ID of the Internal User who clicked on Run Sync
+  lastSyncedById          String?            @db.Uuid
   /// Timestamp when "Run Sync" was last clicked
   lastSyncedAt            DateTime?
-  /// Last created / last updated Timestamps
-  createdAt               DateTime
-  updatedAt               DateTime?
+  // Timestamps
+  createdAt               DateTime           @default(now())
+  updatedAt               DateTime?          @updatedAt
 
   @@unique([workspaceId], name: "UQ_Settings_workspaceId_deletedAt")
   @@index([workspaceId], name: "IX_Settings_workspaceId_deletedAt")
