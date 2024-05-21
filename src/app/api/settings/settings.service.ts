@@ -40,7 +40,6 @@ export class SettingsService extends BaseService {
         ...newData,
         // If sync is currently running and user toggles bidirectional slack sync to off, turn off sync
         isSyncRunning: settings.isSyncRunning ? newData.bidirectionalSlackSync : settings.isSyncRunning,
-        updatedAt: new Date(),
       },
     })
   }
@@ -49,6 +48,7 @@ export class SettingsService extends BaseService {
     // TODO:
     // Fetch all channels for IU
     // For each check if already synced in table using channelId
+    // Fetch list of emails for each channel, using similar approach as CopilotWebhookService#handleChannelCreated
     // If not synced, add to Zeplo queue for copilot channel sync
   }
 }
