@@ -9,10 +9,10 @@ CREATE TABLE "Settings" (
     "channelsToSync" "ChannelSyncOptions" NOT NULL DEFAULT 'clientAndCompany',
     "fallbackMessageSenderId" UUID NOT NULL,
     "slackChannelPrefix" VARCHAR(255) NOT NULL,
-    "isSyncing" BOOLEAN NOT NULL DEFAULT false,
-    "internalUserId" UUID,
+    "isSyncRunning" BOOLEAN NOT NULL DEFAULT false,
+    "lastSyncedById" UUID,
     "lastSyncedAt" TIMESTAMP(3),
-    "createdAt" TIMESTAMP(3) NOT NULL,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3),
 
     CONSTRAINT "Settings_pkey" PRIMARY KEY ("id")

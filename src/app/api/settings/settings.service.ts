@@ -1,4 +1,3 @@
-import { SyncOption } from '@/app/helpers'
 import { CreateUpdateSettingsDTO, PatchUpdateSettings } from '@/types/dtos/settings.dto'
 import { BaseService } from '@api/core/services/base.service'
 import { Setting } from '@prisma/client'
@@ -6,7 +5,7 @@ import { Setting } from '@prisma/client'
 export class SettingsService extends BaseService {
   async getSettings(): Promise<Setting | null> {
     return await this.db.setting.findFirst({
-      where: { workspaceId: this.user.workspaceId, internalUserId: this.user.internalUserId },
+      where: { workspaceId: this.user.workspaceId },
     })
   }
 
@@ -15,7 +14,7 @@ export class SettingsService extends BaseService {
     const data = {
       ...newData,
       workspaceId: this.user.workspaceId,
-      internalUserId: this.user.internalUserId,
+      lastSyncedById: this.user.internalUserId,
     }
 
     if (!settings) {
@@ -40,9 +39,16 @@ export class SettingsService extends BaseService {
       data: {
         ...newData,
         // If sync is currently running and user toggles bidirectional slack sync to off, turn off sync
-        isSyncing: settings.isSyncing ? newData.bidirectionalSlackSync : settings.isSyncing,
-        updatedAt: new Date(),
+        isSyncRunning: settings.isSyncRunning && newData.bidirectionalSlackSync,
       },
     })
+  }
+
+  async runHistoricalChannelSync() {
+    // TODO:
+    // Fetch all channels for IU
+    // For each check if already synced in table using channelId
+    // Fetch list of emails for each channel, using similar approach as CopilotWebhookService#handleChannelCreated
+    // If not synced, add to Zeplo queue for copilot channel sync
   }
 }
