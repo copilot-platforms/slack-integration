@@ -1,7 +1,7 @@
 import httpStatus from 'http-status'
+import { z } from 'zod'
 import { Setting } from '@prisma/client'
 import { ChannelResponse } from '@/types/common'
-import { CopilotAPI } from '@/utils/CopilotAPI'
 import { kebabify } from '@/utils/string'
 import { WebhookActions, WebhookEvent } from '@api/core/types/webhook'
 import { ChannelSchema } from '@api/core/types/message'
@@ -10,6 +10,7 @@ import { parseUserIdAndEmail } from '@api/core/utils/users'
 import { RequestQueueService } from '@api/core/services/requestQueue.service'
 import { BaseService } from '@api/core/services/base.service'
 import User from '@api/core/models/User.model'
+import { SlackChannelSchema } from '@api/core/types/slackbot'
 
 export class CopilotWebhookService extends BaseService {
   constructor(
@@ -42,8 +43,7 @@ export class CopilotWebhookService extends BaseService {
     const channelInfo = ChannelSchema.parse(data.data)
 
     // Get relavant info to sync this channel to Slack
-    const copilot = new CopilotAPI(this.user.token)
-    const channel = await copilot.getMessageChannel(channelInfo.id)
+    const channel = await this.copilot.getMessageChannel(channelInfo.id)
     const targetName = await this.getTargetName(channel)
     const emails = await this.getChannelParticipantEmails(channel)
     const channelName = await this.getChannelName(targetName)
@@ -59,14 +59,37 @@ export class CopilotWebhookService extends BaseService {
 
     // Create a new Slack channel and send invites to all associated emails
     const requestQueue = new RequestQueueService()
-    requestQueue.push('/api/workers/copilot', {
+    requestQueue.push('/api/workers/copilot/channels/bulk-create', {
       traceId: sync.id,
-      params: [{ channelName, emails }],
+      params: {
+        token: this.user.token,
+        data: z.array(SlackChannelSchema).parse([{ syncedChannelId: sync.id, channelName, emails }]),
+      },
     })
   }
 
-  private handleChannelDeleted = (data: WebhookEvent) => {
-    // TODO: After implementing slack bot
+  private handleChannelDeleted = async (data: WebhookEvent) => {
+    const channelInfo = ChannelSchema.parse(data.data)
+    const channel = await this.copilot.getMessageChannel(channelInfo.id)
+    console.log('cawec', channel)
+
+    // Remove from SyncedChannels table
+    const sync = await this.db.syncedChannel.findFirstOrThrow({
+      where: { copilotChannelId: channel.id },
+    })
+    await this.db.syncedChannel.update({
+      where: { id: sync?.id },
+      data: {
+        deletedAt: new Date(),
+      },
+    })
+
+    // Post message to channel conveying that channel has been deleted
+    const requestQueue = new RequestQueueService()
+    requestQueue.push('/api/workers/copilot/channels/delete', {
+      traceId: sync.id,
+      params: { token: this.user.token, sync },
+    })
   }
 
   private handleMessageSent = (_: WebhookEvent) => {
