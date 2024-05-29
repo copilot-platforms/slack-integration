@@ -1,11 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server'
+import httpStatus from 'http-status'
 import User from '@api/core/models/User.model'
 import { SlackbotService } from '@api/core/services/slackbot.service'
 import { SlackChannelsSchema } from '@api/core/types/slackbot'
 import { WorkerRequestSchema } from '@api/core/types/worker'
-import APIError from '@/app/api/core/exceptions/APIError'
-import httpStatus from 'http-status'
-import { SyncedChannelsService } from '@/app/synced-channels/syncedChannels.service'
+import APIError from '@api/core/exceptions/APIError'
+import { SyncedChannelsService } from '@api/synced-channels/syncedChannels.service'
 
 export const POST = async (req: NextRequest) => {
   const body = WorkerRequestSchema.parse(await req.json())
