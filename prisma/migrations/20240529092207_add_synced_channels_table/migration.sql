@@ -18,10 +18,7 @@ CREATE TABLE "SyncedChannels" (
 CREATE INDEX "IX_SyncedChannels_slackChannelId" ON "SyncedChannels"("slackChannelId");
 
 -- CreateIndex
-CREATE INDEX "IX_SyncedChannels_copilotChannelId" ON "SyncedChannels"("copilotChannelId");
-
--- CreateIndex
-CREATE INDEX "IX_SyncedChannels_status_copilotChannelId" ON "SyncedChannels"("status", "copilotChannelId");
+CREATE INDEX "IX_SyncedChannels_copilotChannelId_status_deletedAt" ON "SyncedChannels"("copilotChannelId", "status", "deletedAt");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "SyncedChannels_slackChannelId_key" ON "SyncedChannels"("slackChannelId");
@@ -30,4 +27,4 @@ CREATE UNIQUE INDEX "SyncedChannels_slackChannelId_key" ON "SyncedChannels"("sla
 CREATE UNIQUE INDEX "SyncedChannels_slackChannelName_key" ON "SyncedChannels"("slackChannelName");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "SyncedChannels_copilotChannelId_key" ON "SyncedChannels"("copilotChannelId");
+CREATE UNIQUE INDEX "SyncedChannels_copilotChannelId_deletedAt_key" ON "SyncedChannels"("copilotChannelId", "deletedAt");

@@ -66,9 +66,8 @@ model SyncedChannel {
 
   @@unique([slackChannelId], name: "UQ_SyncedChannels_slackChannelId")
   @@unique([slackChannelName], name: "UQ_SyncedChannels_slackChannelName")
-  @@unique([copilotChannelId], name: "UQ_SyncedChannels_copilotChannelId")
+  @@unique([copilotChannelId, deletedAt], name: "UQ_SyncedChannels_copilotChannelId_deletedAt")
   @@index([slackChannelId], name: "IX_SyncedChannels_slackChannelId")
-  @@index([copilotChannelId], name: "IX_SyncedChannels_copilotChannelId")
-  @@index([status, copilotChannelId], name: "IX_SyncedChannels_status_copilotChannelId")
+  @@index([copilotChannelId, status, deletedAt], name: "IX_SyncedChannels_copilotChannelId_status_deletedAt")
   @@map("SyncedChannels")
 }
