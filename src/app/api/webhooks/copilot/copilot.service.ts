@@ -71,7 +71,6 @@ export class CopilotWebhookService extends BaseService {
   private handleChannelDeleted = async (data: WebhookEvent) => {
     const channelInfo = ChannelSchema.parse(data.data)
     const channel = await this.copilot.getMessageChannel(channelInfo.id)
-    console.log('cawec', channel)
 
     // Remove from SyncedChannels table
     const sync = await this.db.syncedChannel.findFirstOrThrow({
@@ -88,7 +87,7 @@ export class CopilotWebhookService extends BaseService {
     const requestQueue = new RequestQueueService()
     requestQueue.push('/api/workers/copilot/channels/delete', {
       traceId: sync.id,
-      params: { token: this.user.token, sync },
+      params: { token: this.user.token, data: sync },
     })
   }
 
