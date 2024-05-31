@@ -1,15 +1,9 @@
 import { vercelConfig, zeploConfig } from '@/config'
+import { Queueable } from '@api/core/services/queue/request-queue.service'
 
-/**
- * Wrapper around Zeplo which provides a queue service for requests
- *
- * https://zeplo.io/docs/getting-started/
- */
-export class RequestQueueService {
+export class ZeploQueueService implements Queueable {
   /**
-   * Push a new request into the request queue
-   * @param url URL where request is to be made
-   * @param opts Provide optional request body or a trace id to identify this particular request
+   * Push a new request task to the Zeplo queue
    */
   async push(url: string, opts?: { params?: object; traceId?: string }): Promise<Response> {
     return await fetch(`https://zeplo.to/${zeploConfig.url}${url}`, {
