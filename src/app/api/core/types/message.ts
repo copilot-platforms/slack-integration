@@ -35,3 +35,9 @@ export const MessageSchema = z.object({
   updatedAt: z.string().datetime(),
 })
 export type Message = z.infer<typeof MessageSchema>
+
+export const SyncedMessageSchema = z.object({
+  syncId: z.string().uuid(),
+  text: z.string(),
+  slackChannelId: z.string(),
+})

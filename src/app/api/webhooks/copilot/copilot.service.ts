@@ -4,7 +4,7 @@ import { Setting } from '@prisma/client'
 import { ChannelResponse } from '@/types/common'
 import { kebabify } from '@/utils/string'
 import { WebhookActions, WebhookEvent } from '@api/core/types/webhook'
-import { ChannelSchema } from '@api/core/types/message'
+import { ChannelSchema, MessageSchema, SyncedMessageSchema } from '@api/core/types/message'
 import APIError from '@api/core/exceptions/APIError'
 import { parseUserIdAndEmail } from '@api/core/utils/users'
 import { RequestQueueService } from '@api/core/services/queue/request-queue.service'
@@ -59,7 +59,7 @@ export class CopilotWebhookService extends BaseService {
 
     // Create a new Slack channel and send invites to all associated emails
     const requestQueue = new RequestQueueService()
-    requestQueue.push('/api/workers/copilot/channels/bulk-create', {
+    await requestQueue.push('/api/workers/copilot/channels/bulk-create', {
       traceId: sync.id,
       params: {
         token: this.user.token,
@@ -85,14 +85,43 @@ export class CopilotWebhookService extends BaseService {
 
     // Post message to channel conveying that channel has been deleted
     const requestQueue = new RequestQueueService()
-    requestQueue.push('/api/workers/copilot/channels/delete', {
+    await requestQueue.push('/api/workers/copilot/channels/delete', {
       traceId: sync.id,
       params: { token: this.user.token, data: sync },
     })
   }
 
-  private handleMessageSent = (_: WebhookEvent) => {
-    // TODO: implement in relavant PR
+  private handleMessageSent = async (data: WebhookEvent) => {
+    // Fetch slack channel id from db
+    const message = MessageSchema.parse(data.data)
+    const channel = await this.db.syncedChannel.findFirstOrThrow({
+      where: {
+        copilotChannelId: message.channelId,
+      },
+    })
+    // Add to SyncedMessages table with status
+    const syncedMessage = await this.db.syncedMessage.create({
+      data: {
+        messageId: message.id,
+        senderId: message.senderId,
+        copilotChannelId: message.channelId,
+        slackChannelId: channel.slackChannelId,
+        status: 'pending',
+      },
+    })
+    // Post message on that particular slack channel by pushing to request queue
+    const requestQueueService = new RequestQueueService()
+    await requestQueueService.push('/api/workers/copilot/messages/create', {
+      traceId: syncedMessage.id,
+      params: {
+        token: this.user.token,
+        data: SyncedMessageSchema.parse({
+          syncId: syncedMessage.id,
+          text: message.text,
+          slackChannelId: syncedMessage.slackChannelId,
+        }),
+      },
+    })
   }
 
   /**
