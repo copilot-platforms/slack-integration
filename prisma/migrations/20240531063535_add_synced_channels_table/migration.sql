@@ -9,6 +9,7 @@ CREATE TABLE "SyncedChannels" (
     "slackChannelName" VARCHAR(255),
     "status" "SyncStatus" NOT NULL,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP(3) NOT NULL,
     "deletedAt" TIMESTAMP(3),
 
     CONSTRAINT "SyncedChannels_pkey" PRIMARY KEY ("id")

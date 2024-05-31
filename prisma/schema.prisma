@@ -62,6 +62,7 @@ model SyncedChannel {
 
   /// Timestamps
   createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
   deletedAt DateTime?
 
   @@unique([slackChannelId], name: "UQ_SyncedChannels_slackChannelId")
