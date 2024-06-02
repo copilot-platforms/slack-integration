@@ -23,6 +23,8 @@ import {
   InternalUsersResponseSchema,
   ChannelResponse,
   ChannelResponseSchema,
+  ChannelsResponseSchema,
+  ChannelsResponse,
 } from '@/types/common'
 import { copilotAPIKey as apiKey } from '@/config'
 
@@ -94,5 +96,9 @@ export class CopilotAPI {
 
   async getMessageChannel(id: string): Promise<ChannelResponse> {
     return ChannelResponseSchema.parse(await this.copilot.retrieveMessageChannel({ id }))
+  }
+
+  async getMessageChannels(): Promise<ChannelsResponse> {
+    return ChannelsResponseSchema.parse(await this.copilot.listMessageChannels({}))
   }
 }
