@@ -1,6 +1,6 @@
 'use server'
 
-import { SyncOption } from '@/app/helpers'
+import { SyncOption } from '@ui/helpers'
 import { apiUrl } from '@/config'
 import { InternalUserToken } from '@/types/common'
 import { CreateUpdateSettingsDTO, CreateUpdateSettingsSchema, SettingsFormFields } from '@/types/dtos/settings.dto'

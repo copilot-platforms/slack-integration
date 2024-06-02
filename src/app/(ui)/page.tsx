@@ -1,11 +1,11 @@
 import { PageContainer } from '@/components/Containers'
-import { getDefaultSettings } from '@/app/helpers'
+import { getDefaultSettings } from '@ui/helpers'
 import { z } from 'zod'
 import { Setting } from '@prisma/client'
 import { CopilotAPI } from '@/utils/CopilotAPI'
 import { DefaultSetting } from '@/types/settings'
 import { fetchSettings, getInternalUsersOptions, getUserPayload } from '@/actions/settings'
-import { SyncForm } from '@/app/SyncForm'
+import { SyncForm } from '@ui/SyncForm'
 import { runSync as runSyncAction } from '@/actions/settings'
 
 export default async function Home({ searchParams }: { searchParams: { token: string } }) {

@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import User from '@/app/api/core/models/User.model'
+import User from '@ui/api/core/models/User.model'
 import { CopilotWebhookService } from '@api/webhooks/copilot/copilot.service'
 import { SettingsService } from '@api/settings/settings.service'
 import { WebhookSchema } from '@api/core/types/webhook'
