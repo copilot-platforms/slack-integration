@@ -5,7 +5,7 @@ import { SlackbotService } from '@api/core/services/slackbot.service'
 import { SlackChannelsSchema } from '@api/core/types/slackbot'
 import { WorkerRequestSchema } from '@api/core/types/worker'
 import APIError from '@api/core/exceptions/APIError'
-import { SyncedChannelsService } from '@api/synced-channels/syncedChannels.service'
+import { SyncedChannelsService } from '@api/synced-channels/synced-channels.service'
 
 export const POST = async (req: NextRequest) => {
   const body = WorkerRequestSchema.parse(await req.json())
