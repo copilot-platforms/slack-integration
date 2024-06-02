@@ -137,3 +137,8 @@ export const ChannelResponseSchema = z.object({
   lastMessageDate: z.string().datetime().nullable(),
 })
 export type ChannelResponse = z.infer<typeof ChannelResponseSchema>
+
+export const ChannelsResponseSchema = z.object({
+  data: z.array(ChannelResponseSchema),
+})
+export type ChannelsResponse = z.infer<typeof ChannelsResponseSchema>
