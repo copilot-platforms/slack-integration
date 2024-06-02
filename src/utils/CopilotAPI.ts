@@ -21,6 +21,8 @@ import {
   InternalUserToken,
   InternalUsersResponse,
   InternalUsersResponseSchema,
+  ChannelResponse,
+  ChannelResponseSchema,
 } from '@/types/common'
 import { copilotAPIKey as apiKey } from '@/config'
 
@@ -88,5 +90,9 @@ export class CopilotAPI {
 
   async getInternalUsers(): Promise<InternalUsersResponse> {
     return InternalUsersResponseSchema.parse(await this.copilot.listInternalUsers({}))
+  }
+
+  async getMessageChannel(id: string): Promise<ChannelResponse> {
+    return ChannelResponseSchema.parse(await this.copilot.retrieveMessageChannel({ id }))
   }
 }

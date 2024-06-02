@@ -125,3 +125,15 @@ export const ClientRequestSchema = z.object({
   customFields: z.record(z.string(), z.union([z.string(), z.array(z.string())]).nullish()).nullish(),
 })
 export type ClientRequest = z.infer<typeof ClientRequestSchema>
+
+export const ChannelResponseSchema = z.object({
+  id: z.string(),
+  object: z.enum(['messageChannel']),
+  createdAt: z.string().datetime(),
+  updatedAt: z.string().datetime(),
+  membershipType: z.enum(['individual', 'group', 'company']),
+  membershipEntityId: z.string().uuid(),
+  memberIds: z.array(z.string().uuid()),
+  lastMessageDate: z.string().datetime().nullable(),
+})
+export type ChannelResponse = z.infer<typeof ChannelResponseSchema>

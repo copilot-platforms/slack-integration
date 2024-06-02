@@ -35,6 +35,13 @@ class User {
      * @throws {APIError} Handles authentication errors gracefully
      */
     const token = req.nextUrl.searchParams.get('token')
+    return await this.authenticateToken(token)
+  }
+
+  /**
+   * Authenticate a given Copilot token
+   */
+  static async authenticateToken(token: string | null) {
     // Fetch token from search param and validate it
     const tokenParsed = z.string().safeParse(token)
     if (!tokenParsed.success || !tokenParsed.data) {
