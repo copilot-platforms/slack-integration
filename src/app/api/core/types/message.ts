@@ -22,3 +22,22 @@ export const DeleteSyncedChannelSchema = z.object({
   createdAt: z.string().datetime(),
   deletedAt: z.string().datetime().nullable(),
 })
+
+export const MessageSchema = z.object({
+  id: z.string(),
+  channelId: z.string(),
+  createdAt: z.string().datetime(),
+  identityId: z.string(),
+  isAttachmentIncluded: z.boolean(),
+  object: z.enum(['message']),
+  senderId: z.string().uuid(),
+  text: z.string(),
+  updatedAt: z.string().datetime(),
+})
+export type Message = z.infer<typeof MessageSchema>
+
+export const SyncedMessageSchema = z.object({
+  syncId: z.string().uuid(),
+  text: z.string(),
+  slackChannelId: z.string(),
+})

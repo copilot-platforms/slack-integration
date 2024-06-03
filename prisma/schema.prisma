@@ -72,3 +72,26 @@ model SyncedChannel {
   @@index([copilotChannelId, status, deletedAt], name: "IX_SyncedChannels_copilotChannelId_status_deletedAt")
   @@map("SyncedChannels")
 }
+
+model SyncedMessage {
+  id               String  @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  /// Associated copilot channel ID
+  copilotChannelId String? @db.VarChar(32)
+  /// Associated slack channel ID
+  slackChannelId   String? @db.VarChar(9)
+  /// Message id as stored in Copilot
+  messageId        String  @db.VarChar(255)
+  /// Sender ID to track issues in prod
+  senderId         String  @db.Uuid
+
+  /// Current status of sync
+  status SyncStatus
+
+  /// Timestamps
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([messageId], name: "UQ_SyncedMessages_messageId")
+  @@index([messageId], name: "IX_SyncedMessages_messageId")
+  @@map("SyncedMessages")
+}

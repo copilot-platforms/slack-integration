@@ -18,6 +18,6 @@ export class RequestQueueService {
    */
   async push(url: string, opts?: { params?: object; traceId?: string }): Promise<Response> {
     const zeploQueueService = new ZeploQueueService()
-    return zeploQueueService.push(url, opts)
+    return await zeploQueueService.push(url, opts)
   }
 }
