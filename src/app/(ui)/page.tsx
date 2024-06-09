@@ -6,12 +6,10 @@ import { CopilotAPI } from '@/utils/CopilotAPI'
 import { DefaultSetting } from '@/types/settings'
 import { fetchSettings, getInternalUsersOptions, getUserPayload } from '@/actions/settings'
 import { SyncForm } from '@ui/SyncForm'
-import { runSync as runSyncAction } from '@/actions/settings'
 
 export default async function Home({ searchParams }: { searchParams: { token: string } }) {
   const tokenParsed = z.string().safeParse(searchParams.token)
   if (!tokenParsed.success) {
-    // TODO: fix in dedicated PR
     return <div>Please provide a valid token</div>
   }
 
@@ -23,20 +21,14 @@ export default async function Home({ searchParams }: { searchParams: { token: st
     fetchSettings(token),
   ])
   if (!currentUser) {
-    // TODO: fix in dedicated PR
     return <div>Failed to validate internal user</div>
   }
 
   const settings: Setting | DefaultSetting = settingsData || getDefaultSettings(currentUser.internalUserId)
 
-  const runSync = async (_prevState: unknown, formData: FormData) => {
-    'use server'
-    return await runSyncAction(formData, token)
-  }
-
   return (
     <PageContainer>
-      <SyncForm token={token} settings={settings} internalUsers={internalUsers} runSync={runSync} />
+      <SyncForm token={token} initialSettings={settings} internalUsers={internalUsers} />
     </PageContainer>
   )
 }
