@@ -1,14 +1,15 @@
 import { ZodError } from 'zod'
 
 /**
- * Format errors properly - by default zod fieldErrors is a string array joined together by nothing which looks ugly
+ * Returns the first priority error only for a list of ZodErrors for a field
+ * By default zod fieldErrors is a string array joined together which looks ugly
  */
-export const buildFormattedFieldErrors = (error: ZodError) => {
+export const getFirstFieldError = (error: ZodError) => {
   const errors = error.formErrors.fieldErrors
   let formattedErrors: { [x: string | number | symbol]: string | undefined } = {}
   Object.keys(errors).forEach((field) => {
     if (errors[field]) {
-      formattedErrors[field] = errors[field]?.join(', ')
+      formattedErrors[field] = errors[field]?.[0]
     }
   })
   return formattedErrors

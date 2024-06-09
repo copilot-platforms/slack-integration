@@ -12,7 +12,7 @@ import { SyncOption, syncConfigurationOptions, syncOptions } from '@ui/helpers'
 import { DefaultSetting, SelecterOption } from '@/types/settings'
 import { CreateUpdateSettingsDTO, CreateUpdateSettingsSchema } from '@/types/dtos/settings.dto'
 import { runSync, updateBidirectionalSync } from '@/services/settings'
-import { buildFormattedFieldErrors } from '@/utils/zod'
+import { getFirstFieldError } from '@/utils/zod'
 
 interface SyncFormProps {
   token: string
@@ -28,7 +28,7 @@ export const SyncForm = ({ token, initialSettings, internalUsers }: SyncFormProp
       CreateUpdateSettingsSchema.parse(values)
     } catch (error) {
       if (error instanceof ZodError) {
-        return buildFormattedFieldErrors(error)
+        return getFirstFieldError(error)
       }
     }
   }
