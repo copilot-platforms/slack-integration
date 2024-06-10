@@ -129,7 +129,7 @@ export class CopilotWebhookService extends BaseService {
    * @param targetName Target client's full name or target company's name
    * @returns Unique kebab cased Slack channel name
    */
-  private getChannelName = async (targetName: string): Promise<string> => {
+  getChannelName = async (targetName: string): Promise<string> => {
     let defaultName = `${this.settings.slackChannelPrefix}-${kebabify(targetName)}`
     // If name already exists then append a `-2` kind of suffix to make it unique
     const channelNameOccurances = await this.db.syncedChannel.count({
@@ -147,7 +147,7 @@ export class CopilotWebhookService extends BaseService {
    * @param channel Relavant channel
    * @returns Name of the target client / company
    */
-  private getTargetName = async (channel: ChannelResponse): Promise<string> => {
+  getTargetName = async (channel: ChannelResponse): Promise<string> => {
     // Get the client / company that is the target of this message channel
     let targetName: string
 
@@ -174,7 +174,7 @@ export class CopilotWebhookService extends BaseService {
    * @param channel Relavant channel
    * @returns Array of participant emails
    */
-  private getChannelParticipantEmails = async (channel: ChannelResponse): Promise<string[]> => {
+  getChannelParticipantEmails = async (channel: ChannelResponse): Promise<string[]> => {
     // Get an array of emails of each message channel participant
     const internalUsers = parseUserIdAndEmail((await this.copilot.getInternalUsers()).data)
     const clients = parseUserIdAndEmail((await this.copilot.getClients()).data)
