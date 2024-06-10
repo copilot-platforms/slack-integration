@@ -6,5 +6,5 @@ interface PageContainerProps {
 }
 
 export const PageContainer = ({ children }: PageContainerProps) => {
-  return <Box sx={{ px: '12.5%', py: '64px' }}>{children}</Box>
+  return <Box sx={{ px: { xs: '8%', sm: '17.5%' }, py: '64px' }}>{children}</Box>
 }

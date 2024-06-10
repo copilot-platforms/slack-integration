@@ -3,6 +3,7 @@
 import { MenuItem, Select, SelectChangeEvent, Typography, styled } from '@mui/material'
 import DropdownIcon from '@/components/Icons/DropdownArrow'
 import { SelecterOption } from '@/types/settings'
+import { SelecterErrorMessage } from '@/components/FormElements/SelecterErrorMessage'
 
 const StyledSelecter = styled(Select)(({ theme }) => ({
   display: 'block',
@@ -26,26 +27,24 @@ const StyledSelecter = styled(Select)(({ theme }) => ({
 
 interface SelecterProps {
   name: string
-  defaultValue: string
+  value: string
   options: SelecterOption[]
   handleChange?: (e: SelectChangeEvent<unknown>) => void
   disabled?: boolean
+  errorText?: string
 }
 
-export const Selecter = ({ name, defaultValue, options, handleChange, disabled = false }: SelecterProps) => {
+export const Selecter = ({ name, value, options, handleChange, errorText, disabled = false }: SelecterProps) => {
   return (
-    <StyledSelecter
-      defaultValue={defaultValue}
-      IconComponent={DropdownIcon}
-      name={name}
-      disabled={disabled}
-      onChange={handleChange}
-    >
-      {options.map(({ label, value }) => (
-        <MenuItem value={value} key={label}>
-          <Typography variant="bodyMd">{label}</Typography>
-        </MenuItem>
-      ))}
-    </StyledSelecter>
+    <>
+      <StyledSelecter value={value} IconComponent={DropdownIcon} name={name} disabled={disabled} onChange={handleChange}>
+        {options.map(({ label, value }) => (
+          <MenuItem value={value} key={label}>
+            <Typography variant="bodyMd">{label}</Typography>
+          </MenuItem>
+        ))}
+      </StyledSelecter>
+      {errorText && <SelecterErrorMessage>{errorText}</SelecterErrorMessage>}
+    </>
   )
 }

@@ -1,15 +1,16 @@
+import { ZodError } from 'zod'
+
 /**
- * Util to build a proper user readable error message from ZodError.errors object
- * @param errors Array from ZodError.errors
- * @param key Key / fieldname to query errors for
- * @returns User readable error message
+ * Returns the first priority error only for a list of ZodErrors for a field
+ * By default zod fieldErrors is a string array joined together which looks ugly
  */
-
-import { ZodFormattedError } from 'zod'
-
-export const getFirstErrorMessage = <T extends Record<string, unknown>>(
-  errors: ZodFormattedError<T, string>,
-  key: keyof T,
-): string | undefined => {
-  return errors?.[key]?._errors?.[0]?.replace('String', 'Field')
+export const getFirstFieldError = (error: ZodError) => {
+  const errors = error.formErrors.fieldErrors
+  let formattedErrors: { [x: string | number | symbol]: string | undefined } = {}
+  Object.keys(errors).forEach((field) => {
+    if (errors[field]) {
+      formattedErrors[field] = errors[field]?.[0]
+    }
+  })
+  return formattedErrors
 }
