@@ -2,6 +2,7 @@ import { getDefaultSettings } from '@ui/helpers'
 import { CreateUpdateSettingsDTO, PatchUpdateSettings } from '@/types/dtos/settings.dto'
 import { BaseService } from '@api/core/services/base.service'
 import { Setting } from '@prisma/client'
+import { RequestQueueService } from '@api/core/services/queue/request-queue.service'
 
 export class SettingsService extends BaseService {
   async getSettings(): Promise<Setting> {
@@ -49,11 +50,12 @@ export class SettingsService extends BaseService {
     })
   }
 
-  async runHistoricalChannelSync() {
-    // TODO:
-    // Fetch all channels for IU
-    // For each check if already synced in table using channelId
-    // Fetch list of emails for each channel, using similar approach as CopilotWebhookService#handleChannelCreated
-    // If not synced, add to Zeplo queue for copilot channel sync
+  runHistoricalChannelSync = async () => {
+    const requestQueue = new RequestQueueService()
+    await requestQueue.push('/api/workers/copilot/channels/historical-sync', {
+      params: {
+        token: this.user.token,
+      },
+    })
   }
 }

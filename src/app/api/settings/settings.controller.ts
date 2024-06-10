@@ -23,6 +23,10 @@ export const createOrUpdateSettings = async (req: NextRequest) => {
   const settingsService = new SettingsService(user)
   const data = await settingsService.createOrUpdateSettings(body)
 
+  if (data.isSyncRunning) {
+    await settingsService.runHistoricalChannelSync()
+  }
+
   return NextResponse.json({ data })
 }
 
@@ -35,6 +39,10 @@ export const patchSettings = async (req: NextRequest) => {
   const body = PatchUpdateSettingsSchema.parse(await req.json())
   const settingsService = new SettingsService(user)
   const data = await settingsService.partialUpdateSettings(body)
+
+  if (data?.isSyncRunning) {
+    await settingsService.runHistoricalChannelSync()
+  }
 
   return NextResponse.json({ data })
 }
