@@ -10,3 +10,9 @@ export const zeploConfig = {
   apiKey: process.env.ZEPLO_API_KEY || '',
   url: vercelConfig.env === 'development' ? process.env.ZEPLO_DEV_URL : apiUrl,
 }
+export const slackConfig = {
+  clientId: process.env.SLACK_CLIENT_ID || '',
+  clientSecret: process.env.SLACK_CLIENT_SECRET || '',
+  signingSecret: process.env.SLACK_SIGNING_SECRET || '',
+  redirectUri: process.env.SLACK_REDIRECT_URI || '',
+}
