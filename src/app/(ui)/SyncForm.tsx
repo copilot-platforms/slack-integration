@@ -9,6 +9,7 @@ import { DefaultSetting, SelecterOption } from '@/types/settings'
 import { Setting } from '@prisma/client'
 import { useFormState } from 'react-dom'
 import { updateBidirectionalSync } from '@/actions/settings'
+import { useRouter } from 'next/navigation'
 
 interface SyncFormProps {
   token: string
@@ -20,6 +21,8 @@ interface SyncFormProps {
 export const SyncForm = ({ token, runSync, settings, internalUsers }: SyncFormProps) => {
   const [formState, action] = useFormState(runSync, {})
 
+  const router = useRouter()
+  const routeToSlackAppInstall = () => router.push('/api/slack/install')
   return (
     <form action={action}>
       <Box id="slack-sync" mb={'38px'}>
@@ -86,9 +89,16 @@ export const SyncForm = ({ token, runSync, settings, internalUsers }: SyncFormPr
           create a Slack channel for every single channels in the Messages App and may take several minutes.
         </SubHeading>
 
-        <PrimaryBtn type="submit" disabled={settings.isSyncRunning}>
-          {settings.isSyncRunning ? 'Running sync...' : 'Run sync'}
-        </PrimaryBtn>
+        <Box gap={'1em'}>
+          <PrimaryBtn type="submit" disabled={settings.isSyncRunning}>
+            {settings.isSyncRunning ? 'Running sync...' : 'Run sync'}
+          </PrimaryBtn>
+          {settings.isSyncRunning && (
+            <PrimaryBtn type="button" handleClick={routeToSlackAppInstall}>
+              Add to Slack
+            </PrimaryBtn>
+          )}
+        </Box>
       </Box>
     </form>
   )
