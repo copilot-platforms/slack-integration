@@ -1,6 +1,6 @@
 import { WebClient } from '@slack/web-api'
 import { NextRequest, NextResponse } from 'next/server'
-import { slackConfig } from '@/config'
+import { apiUrl, slackConfig } from '@/config'
 import APIError from '@api/core/exceptions/APIError'
 import httpStatus from 'http-status'
 
@@ -25,7 +25,7 @@ export const GET = async (req: NextRequest) => {
     // Store the access token and team ID in your database
     console.info('Authenticated team', team, 'with access token:', access_token)
 
-    return NextResponse.json('Bot successfully added to workspace')
+    return NextResponse.redirect(`${apiUrl}/oauth-success`)
   } catch (error) {
     throw new APIError(httpStatus.BAD_REQUEST, 'Error during OAuth verification')
   }

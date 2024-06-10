@@ -54,7 +54,7 @@ export const SyncForm = ({ token, initialSettings, internalUsers }: SyncFormProp
   }
 
   const router = useRouter()
-  const routeToSlackAppInstall = () => router.push('/api/slack/install')
+  const routeToSlackAppInstall = () => window.open('/api/slack/install')
   return (
     <form onSubmit={handleSubmit}>
       <Box id="slack-sync" mb={'38px'}>
@@ -125,19 +125,23 @@ export const SyncForm = ({ token, initialSettings, internalUsers }: SyncFormProp
           create a Slack channel for every single channels in the Messages App and may take several minutes.
         </SubHeading>
 
-        <Box gap={'1em'}>
-          <PrimaryBtn
-            type="submit"
-            isLoading={isSubmitting}
-            disabled={values.isSyncRunning || !values.bidirectionalSlackSync || isSubmitting}
-          >
-            {values.isSyncRunning ? 'Running sync...' : 'Run sync'}
-          </PrimaryBtn>
-          {values.isSyncRunning && (
-            <PrimaryBtn type="button" handleClick={routeToSlackAppInstall}>
-              Add to Slack
+        <Box sx={{ display: 'flex', gap: '0.75em' }}>
+          <div>
+            <PrimaryBtn
+              type="submit"
+              isLoading={isSubmitting}
+              disabled={values.isSyncRunning || !values.bidirectionalSlackSync || isSubmitting}
+            >
+              {values.isSyncRunning ? 'Running sync...' : 'Run sync'}
             </PrimaryBtn>
-          )}
+          </div>
+          <div>
+            {values.isSyncRunning && (
+              <PrimaryBtn type="button" handleClick={routeToSlackAppInstall}>
+                Add to Slack
+              </PrimaryBtn>
+            )}
+          </div>
         </Box>
       </Box>
     </form>
