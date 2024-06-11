@@ -35,7 +35,10 @@ export class SlackbotService extends BaseService {
     await this.slackClient.conversations.archive({ channel })
   }
 
-  async postMessage(channel: string, text: string) {
+  async postMessage(channel: string, text: string, senderName?: string | null) {
+    if (senderName) {
+      text = `${senderName} sent a message in Copilot: \n${text}`
+    }
     const syncedMessage = await this.db.syncedMessage.findFirstOrThrow({ where: { slackChannelId: channel } })
     const syncedMessagesService = new SyncedMessagesService(this.user)
     try {

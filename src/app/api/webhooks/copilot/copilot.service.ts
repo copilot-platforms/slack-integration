@@ -109,6 +109,12 @@ export class CopilotWebhookService extends BaseService {
         status: 'pending',
       },
     })
+
+    // Get sender name, or fallback to fallbackMessagesSenderId if it doesn't exist
+    const senderName =
+      (await this.copilot.getUserNameById(message.senderId)) ||
+      (await this.copilot.getUserNameById(this.settings.fallbackMessageSenderId))
+
     // Post message on that particular slack channel by pushing to request queue
     const requestQueueService = new RequestQueueService()
     await requestQueueService.push('/api/workers/copilot/messages/create', {
@@ -119,6 +125,7 @@ export class CopilotWebhookService extends BaseService {
           syncId: syncedMessage.id,
           text: message.text,
           slackChannelId: syncedMessage.slackChannelId,
+          senderName,
         }),
       },
     })

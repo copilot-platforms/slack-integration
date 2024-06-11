@@ -10,7 +10,7 @@ export class ZeploQueueService implements Queueable {
       method: 'POST',
       headers: {
         'X-Zeplo-Token': zeploConfig.apiKey,
-        'X-Zeplo-Retry': '3|exponential|1',
+        'X-Zeplo-Retry': '3|exponential|2',
         'X-Zeplo-Trace': opts?.traceId || '',
         'X-Zeplo-Env': vercelConfig.env,
       },

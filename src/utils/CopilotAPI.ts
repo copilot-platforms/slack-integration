@@ -25,6 +25,8 @@ import {
   ChannelResponseSchema,
   ChannelsResponseSchema,
   ChannelsResponse,
+  InternalUsers,
+  InternalUsersSchema,
 } from '@/types/common'
 import { copilotAPIKey as apiKey } from '@/config'
 
@@ -90,6 +92,10 @@ export class CopilotAPI {
     return CustomFieldResponseSchema.parse(await this.copilot.listCustomFields())
   }
 
+  async getInternalUser(id: string): Promise<InternalUsers> {
+    return InternalUsersSchema.parse(await this.copilot.retrieveInternalUser({ id }))
+  }
+
   async getInternalUsers(): Promise<InternalUsersResponse> {
     return InternalUsersResponseSchema.parse(await this.copilot.listInternalUsers({}))
   }
@@ -100,5 +106,27 @@ export class CopilotAPI {
 
   async getMessageChannels(): Promise<ChannelsResponse> {
     return ChannelsResponseSchema.parse(await this.copilot.listMessageChannels({}))
+  }
+
+  async getUserNameById(id: string): Promise<string> {
+    let user
+    try {
+      const client = await this.getClient(id)
+      user = `${client.givenName} ${client.familyName}`
+    } catch (_) {
+      try {
+        const internalUser = await this.getInternalUser(id)
+        user = `${internalUser.givenName} ${internalUser.familyName}`
+      } catch (_) {
+        try {
+          const company = await this.getCompany(id)
+          user = company.name
+        } catch (err: unknown) {
+          console.error(`No user found by id ${id}`)
+          return ''
+        }
+      }
+    }
+    return user
   }
 }
