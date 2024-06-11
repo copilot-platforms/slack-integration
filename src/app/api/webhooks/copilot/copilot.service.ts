@@ -187,11 +187,10 @@ export class CopilotWebhookService extends BaseService {
   getChannelParticipantEmails = async (channel: ChannelResponse): Promise<string[]> => {
     // Get an array of emails of each message channel participant
     const internalUsers = parseUserIdAndEmail((await this.copilot.getInternalUsers()).data)
-    const clients = parseUserIdAndEmail((await this.copilot.getClients()).data)
     const emails: string[] = []
     channel.memberIds.forEach((memberId) => {
       // Fetch email whether it is of an internal user or a client
-      const email = internalUsers[memberId] ?? clients[memberId]
+      const email = internalUsers[memberId]
       email && emails.push(email)
     })
     return emails
