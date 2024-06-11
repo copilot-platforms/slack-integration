@@ -133,7 +133,10 @@ export class CopilotWebhookService extends BaseService {
     let defaultName = `${this.settings.slackChannelPrefix}-${kebabify(targetName)}`
     // If name already exists then append a `-2` kind of suffix to make it unique
     const channelNameOccurances = await this.db.syncedChannel.count({
-      where: { slackChannelName: { startsWith: defaultName } },
+      where: {
+        // Get all records WHERE slackChannelName = {defaultName} OR slackChannelName LIKE "{defaultName}-%"
+        OR: [{ slackChannelName: defaultName }, { slackChannelName: { startsWith: `${defaultName}-` } }],
+      },
     })
     if (channelNameOccurances) {
       defaultName += `-${String(channelNameOccurances + 1)}`

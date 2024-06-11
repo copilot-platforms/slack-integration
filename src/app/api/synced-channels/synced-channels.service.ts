@@ -45,7 +45,7 @@ export class SyncedChannelsService extends BaseService {
     // Do it with a filter method like this to avoid having to do repeated queries to db
     const unsyncedChannels = channels.filter((channel) => !channelsWithSync.includes(channel.id))
 
-    // Add unsynced channels to zeplo queue
+    // Add unsynced channels to request queue
     const requestQueue = new RequestQueueService()
     const copilotService = new CopilotWebhookService(this.user, settings)
 

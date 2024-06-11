@@ -32,6 +32,7 @@ export const POST = async (req: NextRequest) => {
       throw new APIError(
         httpStatus.INTERNAL_SERVER_ERROR,
         `Failed to sync channel: ${JSON.stringify(channel)} - ${JSON.stringify(err)}`,
+        err,
       )
     }
 

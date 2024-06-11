@@ -15,4 +15,5 @@ export const slackConfig = {
   clientSecret: process.env.SLACK_CLIENT_SECRET || '',
   signingSecret: process.env.SLACK_SIGNING_SECRET || '',
   redirectUri: process.env.SLACK_REDIRECT_URI || '',
+  botOAuthToken: process.env.SLACK_BOT_OAUTH_TOKEN || '',
 }
