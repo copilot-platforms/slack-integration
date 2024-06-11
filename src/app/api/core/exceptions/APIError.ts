@@ -7,11 +7,13 @@
 class APIError extends Error {
   status: number
   message: string
+  error?: unknown
 
-  constructor(status: number = 500, message: string = 'Something went wrong') {
+  constructor(status: number = 500, message: string = 'Something went wrong', error?: unknown) {
     super(message)
     this.status = status
     this.message = message
+    this.error = error
   }
 }
 
