@@ -30,6 +30,11 @@ export class SlackbotService extends BaseService {
     return slackChannelId
   }
 
+  async deleteChannel(channel: string) {
+    console.info(`Deleting channel with id ${channel}`)
+    await this.slackClient.conversations.archive({ channel })
+  }
+
   async postMessage(channel: string, text: string) {
     const syncedMessage = await this.db.syncedMessage.findFirstOrThrow({ where: { slackChannelId: channel } })
     const syncedMessagesService = new SyncedMessagesService(this.user)

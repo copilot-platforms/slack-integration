@@ -10,7 +10,7 @@ export const POST = async (req: NextRequest) => {
 
   const sync = DeleteSyncedChannelSchema.parse(body.data)
   const slackbot = new SlackbotService(user)
-  await slackbot.postMessage(sync.slackChannelId, 'Posted Copilot Messages channel deleted to slack channel')
+  await slackbot.deleteChannel(sync.slackChannelId)
 
   return NextResponse.json(true)
 }
