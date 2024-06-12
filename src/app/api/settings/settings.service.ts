@@ -1,13 +1,22 @@
+import { getDefaultSettings } from '@ui/helpers'
 import { CreateUpdateSettingsDTO, PatchUpdateSettings } from '@/types/dtos/settings.dto'
 import { BaseService } from '@api/core/services/base.service'
 import { Setting } from '@prisma/client'
 import { RequestQueueService } from '@api/core/services/queue/request-queue.service'
 
 export class SettingsService extends BaseService {
-  async getSettings(): Promise<Setting | null> {
-    return await this.db.setting.findFirst({
+  async getSettings(): Promise<Setting> {
+    let settings = await this.db.setting.findFirst({
       where: { workspaceId: this.user.workspaceId },
     })
+    if (!settings) {
+      // Create one with default settings for this workspace
+      const firstInternalUser = (await this.copilot.getInternalUsers()).data?.[0]
+      settings = await this.db.setting.create({
+        data: { ...getDefaultSettings(firstInternalUser.id), workspaceId: this.user.workspaceId },
+      })
+    }
+    return settings
   }
 
   async createOrUpdateSettings(newData: CreateUpdateSettingsDTO): Promise<Setting> {
@@ -29,11 +38,7 @@ export class SettingsService extends BaseService {
   }
 
   async partialUpdateSettings(newData: PatchUpdateSettings): Promise<Setting | null> {
-    const settings = await this.getSettings()
-    if (!settings) {
-      // Do not partial update settings if no setting has been created beforehand
-      return null
-    }
+    let settings = await this.getSettings()
 
     return await this.db.setting.update({
       where: { id: settings.id, workspaceId: this.user.workspaceId },

@@ -21,6 +21,6 @@ export const getDefaultSettings = (fallbackMessageSenderId: string): DefaultSett
     channelsToSync: ChannelSyncOptions.clientAndCompany,
     fallbackMessageSenderId,
     isSyncRunning: false,
-    slackChannelPrefix: '',
+    slackChannelPrefix: 'copilot',
   }
 }

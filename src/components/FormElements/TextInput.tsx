@@ -1,6 +1,7 @@
 'use client'
 
 import { TextField, styled } from '@mui/material'
+import { ChangeEvent } from 'react'
 
 export const StyledTextInput = styled(TextField, {
   shouldForwardProp: (prop) => prop !== 'padding',
@@ -44,15 +45,24 @@ interface TextInputProps {
   defaultValue?: string
   placeholder?: string
   errorText?: string
+  handleChange?: (e: ChangeEvent<HTMLInputElement>) => void
   disabled?: boolean
 }
 
-export const TextInput = ({ name, defaultValue, placeholder, errorText, disabled = false }: TextInputProps) => {
+export const TextInput = ({
+  name,
+  defaultValue,
+  placeholder,
+  handleChange,
+  errorText,
+  disabled = false,
+}: TextInputProps) => {
   return (
     <StyledTextInput
       fullWidth
       name={name}
       placeholder={placeholder}
+      onChange={handleChange}
       error={!!errorText}
       helperText={errorText}
       disabled={disabled}
