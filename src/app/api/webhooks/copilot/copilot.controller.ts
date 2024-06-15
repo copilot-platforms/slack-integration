@@ -11,7 +11,6 @@ export const handleCopilotWebhookEvent = async (req: NextRequest) => {
   // If sync is not running for a workspace, we can safely ignore this webhook call
   const settingsService = new SettingsService(user)
   const settings = await settingsService.getSettings()
-  console.log('settings', settings)
   if (!settings?.isSyncRunning) {
     console.info('Sync not running, ignoring webhook call')
     return NextResponse.json({ message: 'Sync not running, ignoring webhook call' })

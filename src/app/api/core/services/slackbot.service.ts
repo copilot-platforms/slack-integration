@@ -28,7 +28,6 @@ export class SlackbotService extends BaseService {
     const slackChannelId = z.string().parse(createResponse.channel?.id)
     const syncableMembers = await this.fetchSlackMembers(channel.emails)
     console.log('syncable members', syncableMembers.map((member) => member.id).length)
-
     return slackChannelId
   }
 

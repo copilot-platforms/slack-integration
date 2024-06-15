@@ -38,7 +38,6 @@ export const createSyncedSlackChannel = async (req: NextRequest) => {
     // Create new channel and update status to 'success' if successful.
     const newSlackChannelId = await slackbot.createChannel(channel)
     await syncedChannelsService.markSyncComplete(channel.syncedChannelId, newSlackChannelId)
-    console.log(channel.channelName, 'is synced')
   } catch (err: unknown) {
     // Mark sync status as failed and throw error. This will cause Zeplo to retry
     await syncedChannelsService.markSyncFailed(channel.syncedChannelId)
@@ -48,7 +47,6 @@ export const createSyncedSlackChannel = async (req: NextRequest) => {
       err,
     )
   }
-  console.log('Done sync of', channel.channelName)
   return NextResponse.json({ message: 'Successfully synced channel' })
 }
 

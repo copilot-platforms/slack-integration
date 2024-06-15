@@ -45,7 +45,6 @@ export class SyncedChannelsService extends BaseService {
     const syncChannel = async (sync: SyncedChannel) => {
       const channel = await this.copilot.getMessageChannel(z.string().parse(sync.copilotChannelId))
       const emails = await this.getChannelParticipantEmails(channel)
-      console.log('xxxsyncing', sync.slackChannelName)
       await requestQueue.push('/api/workers/copilot/channels/create', {
         traceId: sync.id,
         params: {
