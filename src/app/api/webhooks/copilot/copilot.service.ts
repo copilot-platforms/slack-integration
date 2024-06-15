@@ -60,7 +60,7 @@ export class CopilotWebhookService extends BaseService {
     // Create a new Slack channel and send invites to all associated emails
     const requestQueue = new RequestQueueService()
     // Instantaneous creation of Channels in individual case
-    requestQueue.push('/api/workers/copilot/channels/create', {
+    await requestQueue.push('/api/workers/copilot/channels/create', {
       traceId: sync.id,
       params: {
         token: this.user.token,
@@ -86,7 +86,7 @@ export class CopilotWebhookService extends BaseService {
 
     // Post message to channel conveying that channel has been deleted
     const requestQueue = new RequestQueueService()
-    requestQueue.push('/api/workers/copilot/channels/delete', {
+    await requestQueue.push('/api/workers/copilot/channels/delete', {
       traceId: sync.id,
       params: { token: this.user.token, data: sync },
     })
