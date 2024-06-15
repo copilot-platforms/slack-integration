@@ -11,6 +11,11 @@ import { parseUserIdAndEmail } from '@api/core/utils/users'
 import Bottleneck from 'bottleneck'
 
 export class SyncedChannelsService extends BaseService {
+  /**
+   * Factory function to mark a SyncedChannel with a particular status
+   * @param status New status for the sync
+   * @returns New SyncedChannel record
+   */
   private markSyncFactory(status: SyncStatus): (id: string, slackChannelId?: string) => Promise<SyncedChannel> {
     return async (id: string, slackChannelId?: string) => {
       return await this.db.syncedChannel.update({
@@ -20,15 +25,29 @@ export class SyncedChannelsService extends BaseService {
     }
   }
 
+  /**
+   * Marks a channel sync as success
+   */
   markSyncComplete = this.markSyncFactory('success')
+
+  /**
+   * Marks a channel sync as failed
+   */
   markSyncFailed = this.markSyncFactory('failed')
 
+  /**
+   * Checks if a given record for SyncedChannel id is synced successfully
+   */
   async checkIfSynced(id: string): Promise<Boolean> {
     return !!(await this.db.syncedChannel.findFirst({
       where: { id, status: 'success' },
     }))
   }
 
+  /**
+   * Initializes a sync a batch of 'pending' channels in the SyncedChannels table
+   * @param batchSize Number of syncs to take in a single batch
+   */
   async batchSyncChannels(batchSize: number) {
     const syncedChannels = await this.db.syncedChannel.findMany({
       where: { status: 'pending' },
@@ -41,8 +60,7 @@ export class SyncedChannelsService extends BaseService {
       minTime: 5, // minimal spacing between jobs to handle quick successive calls
     })
     const requestQueue = new RequestQueueService()
-
-    const syncChannel = async (sync: SyncedChannel) => {
+    const limitedSyncChannel = limiter.wrap(async (sync: SyncedChannel) => {
       const channel = await this.copilot.getMessageChannel(z.string().parse(sync.copilotChannelId))
       const emails = await this.getChannelParticipantEmails(channel)
       await requestQueue.push('/api/workers/copilot/channels/create', {
@@ -52,12 +70,14 @@ export class SyncedChannelsService extends BaseService {
           data: SlackChannelSchema.parse({ syncedChannelId: sync.id, channelName: sync.slackChannelName, emails }),
         },
       })
-    }
-
-    const limitedSyncChannel = limiter.wrap(syncChannel)
+    })
     await Promise.all(syncedChannels.map(limitedSyncChannel))
   }
 
+  /**
+   * Fetches a list of all previous Copilot Messages channels and adds them to SyncedChannels table as 'pending'
+   * These pending tasks are later taken care of by the `batch-create` cron worker
+   */
   async runHistoricalSync() {
     const settings = await new SettingsService(this.user).getSettings()
     if (!settings) return
@@ -84,6 +104,9 @@ export class SyncedChannelsService extends BaseService {
     }
   }
 
+  /**
+   * Adds a SyncedChannel 'pending' record for an individual channel
+   */
   private async createSync(copilotService: CopilotWebhookService, channel: Channel) {
     const targetName = await copilotService.getTargetName(channel)
     const channelName = await copilotService.getChannelName(targetName)
@@ -101,7 +124,7 @@ export class SyncedChannelsService extends BaseService {
    * @param channel Relavant channel
    * @returns Array of participant emails
    */
-  getChannelParticipantEmails = async (channel: ChannelResponse): Promise<string[]> => {
+  private getChannelParticipantEmails = async (channel: ChannelResponse): Promise<string[]> => {
     // Get an array of emails of each message channel participant
     const internalUsers = parseUserIdAndEmail((await this.copilot.getInternalUsers()).data)
     const emails: string[] = []

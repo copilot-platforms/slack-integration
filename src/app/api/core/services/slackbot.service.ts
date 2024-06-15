@@ -11,6 +11,11 @@ import { SyncedMessagesService } from '@api/synced-messages/synced-messages.serv
 export class SlackbotService extends BaseService {
   slackClient = new WebClient(slackConfig.botOAuthToken)
 
+  /**
+   * Creates a new Slack Channel with Slackbot as the creator
+   * @param channel Synced Channel details with channelName and invitee emails
+   * @returns Slack channel ID of newly created channel
+   */
   async createChannel(channel: SlackChannel): Promise<string> {
     console.info(`Creating channel ${channel.channelName}`)
 
@@ -32,11 +37,21 @@ export class SlackbotService extends BaseService {
     return slackChannelId
   }
 
+  /**
+   * Archives a given channel in Slack
+   * @param channel Slack Channel ID which to archive
+   */
   async deleteChannel(channel: string) {
     console.info(`Deleting channel with id ${channel}`)
     await this.slackClient.conversations.archive({ channel })
   }
 
+  /**
+   * Post a text message from a sender to a slack channel
+   * @param channel Slack channel ID
+   * @param text Message body
+   * @param senderName Name of the sender on behalf of which the Slackbot will post
+   */
   async postMessage(channel: string, text: string, senderName?: string | null) {
     if (senderName) {
       text = `${senderName} sent a message in Copilot: \n\n${text}`
@@ -52,6 +67,11 @@ export class SlackbotService extends BaseService {
     }
   }
 
+  /**
+   * Match an array of emails to the list of members present in a slack workspace to find which ones are common
+   * @param emails Array of emails to find in slack members list
+   * @returns Slack Members with email addresses in `emails`
+   */
   private async fetchSlackMembers(emails: string[]): Promise<Member[]> {
     const slackUsers = await this.slackClient.users.list({})
     if (!slackUsers.members || !slackUsers.members.length) {
@@ -64,6 +84,11 @@ export class SlackbotService extends BaseService {
     return slackUsersToSync
   }
 
+  /**
+   * Sends invites to a channel for an array of slack Members
+   * @param channel Slack channel ID
+   * @param members Array of slack Member to send invites
+   */
   private async inviteSlackMembersToConversation(channel: string, members: Member[]) {
     const users = members
       .map((member) => member.id)

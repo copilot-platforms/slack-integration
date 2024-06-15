@@ -108,25 +108,30 @@ export class CopilotAPI {
     return ChannelsResponseSchema.parse(await this.copilot.listMessageChannels({}))
   }
 
+  /**
+   * Get the username for a given id. ID can be a client, IU, or company with no way to identify them apart.
+   * @param id User / company id
+   * @returns Formatted name of the client / IU / company
+   */
   async getUserNameById(id: string): Promise<string> {
-    let user
+    // Check if user is an IU by using copilot internal users retrieve endpoint
+    try {
+      const internalUser = await this.getInternalUser(id)
+      return `${internalUser.givenName} ${internalUser.familyName}`
+    } catch (_) {}
+    // Check if user id has a matching client
     try {
       const client = await this.getClient(id)
-      user = `${client.givenName} ${client.familyName}`
-    } catch (_) {
-      try {
-        const internalUser = await this.getInternalUser(id)
-        user = `${internalUser.givenName} ${internalUser.familyName}`
-      } catch (_) {
-        try {
-          const company = await this.getCompany(id)
-          user = company.name
-        } catch (err: unknown) {
-          console.error(`No user found by id ${id}`)
-          return ''
-        }
-      }
+      return `${client.givenName} ${client.familyName}`
+    } catch (_) {} // Continue to next try-catch block
+    // Check if user id has a matching company
+    try {
+      const company = await this.getCompany(id)
+      return company.name
+    } catch (err: unknown) {
+      // No match found for iu / client / company
+      console.error(`No user found by id ${id}`)
+      return ''
     }
-    return user
   }
 }
