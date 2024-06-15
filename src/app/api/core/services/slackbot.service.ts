@@ -1,4 +1,5 @@
 import { ConversationsCreateResponse, WebClient } from '@slack/web-api'
+import { Member } from '@slack/web-api/dist/types/response/UsersListResponse'
 import httpStatus from 'http-status'
 import { z } from 'zod'
 import { slackConfig } from '@/config'
@@ -12,13 +13,12 @@ export class SlackbotService extends BaseService {
 
   async createChannel(channel: SlackChannel): Promise<string> {
     console.info(`Creating channel ${channel.channelName}`)
-    // TODO: Properly invite new users - for now fetching user ids is an issue
-    console.info(`Sending invite emails from slack to:`, channel.emails)
 
     let createResponse: ConversationsCreateResponse
     try {
       createResponse = await this.slackClient.conversations.create({
         name: channel.channelName,
+        // Make channels public as per current requirements
         is_private: false,
       })
     } catch (e: unknown) {
@@ -26,6 +26,8 @@ export class SlackbotService extends BaseService {
       throw new APIError(httpStatus.INTERNAL_SERVER_ERROR, 'Failed to create corresponding slack channel')
     }
     const slackChannelId = z.string().parse(createResponse.channel?.id)
+    const syncableMembers = await this.fetchSlackMembers(channel.emails)
+    console.log('syncable members', syncableMembers.map((member) => member.id).length)
 
     return slackChannelId
   }
@@ -48,5 +50,17 @@ export class SlackbotService extends BaseService {
       await syncedMessagesService.markSyncFailed(syncedMessage.id)
       throw new APIError(httpStatus.INTERNAL_SERVER_ERROR, 'Failed to sync message', err)
     }
+  }
+
+  private async fetchSlackMembers(emails: string[]): Promise<Member[]> {
+    const slackUsers = await this.slackClient.users.list({})
+    if (!slackUsers.members || !slackUsers.members.length) {
+      return []
+    }
+
+    const slackUsersToSync = slackUsers.members
+      .filter((user) => !!user.profile && !!user.profile?.email) // Filters users who have not yet setup their acc / confirmed their emails
+      .filter((user) => emails.includes(user.profile?.email as string))
+    return slackUsersToSync
   }
 }

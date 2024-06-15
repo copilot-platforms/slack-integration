@@ -1,15 +1,7 @@
-import { NextRequest, NextResponse } from 'next/server'
-import { z } from 'zod'
-import User from '@api/core/models/User.model'
-import { SyncedChannelsService } from '@/app/api/synced-channels/synced-channels.service'
+import { withErrorHandler } from '@api/core/utils/withErrorHandler'
+import { runHistoricalSync } from '@api/workers/copilot/channels/copilot-channels-worker.controller'
 
-export const POST = async (req: NextRequest) => {
-  const reqBody = await req.json()
-  const token = z.string().parse(reqBody.token)
-  const user = await User.authenticateToken(token)
+// Raise maximum duration of serverless runtime to 120 secs
+export const maxDuration = 120
 
-  const syncedChannelsService = new SyncedChannelsService(user)
-  await syncedChannelsService.runHistoricalSync()
-
-  return NextResponse.json(true)
-}
+export const POST = withErrorHandler(runHistoricalSync)
