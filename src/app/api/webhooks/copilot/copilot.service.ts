@@ -33,7 +33,7 @@ export class CopilotWebhookService extends BaseService {
     console.log('event type', data.eventType)
     console.log('webhook data', data)
     // Fetch  and run appropriate action if event type exists in webhookActions keys, else ignore this webhook event
-    webhookActions[data.eventType as keyof WebhookActions]?.(data)
+    await webhookActions[data.eventType as keyof WebhookActions]?.(data)
   }
 
   /**
@@ -103,6 +103,7 @@ export class CopilotWebhookService extends BaseService {
         copilotChannelId: message.channelId,
       },
     })
+    console.log('chnl', channel)
     // Add to SyncedMessages table with status
     const syncedMessage = await this.db.syncedMessage.create({
       data: {
@@ -113,11 +114,13 @@ export class CopilotWebhookService extends BaseService {
         status: 'pending',
       },
     })
+    console.log('syncedMsg', syncedMessage)
 
     // Get sender name, or fallback to fallbackMessagesSenderId if it doesn't exist
     const senderName =
       (await this.copilot.getUserNameById(message.senderId)) ||
       (await this.copilot.getUserNameById(this.settings.fallbackMessageSenderId))
+    console.log('sndr', senderName)
 
     // Post message on that particular slack channel by pushing to request queue
     const requestQueueService = new RequestQueueService()
