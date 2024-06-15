@@ -30,6 +30,8 @@ export class CopilotWebhookService extends BaseService {
       'messageChannel.deleted': this.handleChannelDeleted,
       'message.sent': this.handleMessageSent,
     }
+    console.log('event type', data.eventType)
+    console.log('webhook data', data)
     // Fetch  and run appropriate action if event type exists in webhookActions keys, else ignore this webhook event
     webhookActions[data.eventType as keyof WebhookActions]?.(data)
   }
@@ -95,6 +97,7 @@ export class CopilotWebhookService extends BaseService {
   private handleMessageSent = async (data: WebhookEvent) => {
     // Fetch slack channel id from db
     const message = MessageSchema.parse(data.data)
+    console.log('msg', message)
     const channel = await this.db.syncedChannel.findFirstOrThrow({
       where: {
         copilotChannelId: message.channelId,
