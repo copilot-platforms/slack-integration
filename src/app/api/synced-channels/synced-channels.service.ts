@@ -86,9 +86,7 @@ export class SyncedChannelsService extends BaseService {
 
   private async createSync(copilotService: CopilotWebhookService, channel: Channel) {
     const targetName = await copilotService.getTargetName(channel)
-    // const emails = await copilotService.getChannelParticipantEmails(channel)
     const channelName = await copilotService.getChannelName(targetName)
-
     await this.db.syncedChannel.create({
       data: {
         copilotChannelId: channel.id,

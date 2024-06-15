@@ -27,7 +27,8 @@ export class SlackbotService extends BaseService {
     }
     const slackChannelId = z.string().parse(createResponse.channel?.id)
     const syncableMembers = await this.fetchSlackMembers(channel.emails)
-    console.log('syncable members', syncableMembers.map((member) => member.id).length)
+    // Invite syncableMembers to slackChannelId here
+    await this.inviteSlackMembersToConversation(slackChannelId, syncableMembers)
     return slackChannelId
   }
 
@@ -61,5 +62,13 @@ export class SlackbotService extends BaseService {
       .filter((user) => !!user.profile && !!user.profile?.email) // Filters users who have not yet setup their acc / confirmed their emails
       .filter((user) => emails.includes(user.profile?.email as string))
     return slackUsersToSync
+  }
+
+  private async inviteSlackMembersToConversation(channel: string, members: Member[]) {
+    const users = members
+      .map((member) => member.id)
+      .filter((id): id is string => !!id) // Filter to ensure all ids are defined and not null
+      .join(',')
+    await this.slackClient.conversations.invite({ channel, users, force: true })
   }
 }
