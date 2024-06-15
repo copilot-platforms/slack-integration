@@ -52,7 +52,7 @@ export class SettingsService extends BaseService {
 
   runHistoricalChannelSync = async () => {
     const requestQueue = new RequestQueueService()
-    requestQueue.push('/api/workers/copilot/channels/historical-sync', {
+    await requestQueue.push('/api/workers/copilot/channels/historical-sync', {
       params: {
         token: this.user.token,
       },
