@@ -118,6 +118,7 @@ export class CopilotWebhookService extends BaseService {
 
     // Post message on that particular slack channel by pushing to request queue
     const requestQueueService = new RequestQueueService()
+    console.log('creating messsage')
     await requestQueueService.push('/api/workers/copilot/messages/create', {
       traceId: syncedMessage.id,
       params: {
