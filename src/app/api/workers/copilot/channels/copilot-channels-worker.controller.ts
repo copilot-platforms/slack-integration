@@ -3,7 +3,7 @@ import { slackConfig } from '@/config'
 import httpStatus from 'http-status'
 import User from '@api/core/models/User.model'
 import { SlackbotService } from '@api/core/services/slackbot.service'
-import { SlackChannelSchema, SlackChannelsSchema } from '@api/core/types/slackbot'
+import { SlackChannelSchema } from '@api/core/types/slackbot'
 import { WorkerRequestSchema } from '@api/core/types/worker'
 import APIError from '@api/core/exceptions/APIError'
 import { SyncedChannelsService } from '@api/synced-channels/synced-channels.service'
@@ -11,8 +11,10 @@ import { z } from 'zod'
 import { DeleteSyncedChannelSchema } from '@api/core/types/message'
 
 export const batchCreate = async (req: NextRequest) => {
-  const body = WorkerRequestSchema.parse(await req.json())
-  const user = await User.authenticateToken(body.token)
+  const url = new URL(req.url)
+  const searchParams = new URLSearchParams(url.searchParams)
+  const token = z.string().parse(searchParams.get('token'))
+  const user = await User.authenticateToken(token)
 
   const syncedChannelsService = new SyncedChannelsService(user)
   await syncedChannelsService.batchSyncChannels(slackConfig.batchSize)

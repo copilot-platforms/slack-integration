@@ -1,0 +1,8 @@
+{
+  "crons": [
+    {
+      "path": "/api/workers/copilot/channels/batch-create?token=e158be1b2b66afe9578c8e695c2f83d3d368c61e3b4ff4335109f7f7f53584b21e2e94411c60485b7e4a41d8389bbfef6562b9bf301e5aeae5cc6759947bf17050add2873797ff0048ef80a5f22b86b16b8d6d3dd10fc90d20df958d6dd2882d8a6533a3142fdbfc0c7ff6126dbcea80",
+      "schedule": "*/5 * * * *"
+    }
+  ]
+}

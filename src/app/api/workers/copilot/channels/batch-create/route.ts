@@ -4,4 +4,4 @@ import { batchCreate } from '@api/workers/copilot/channels/copilot-channels-work
 // Set timeout of serverless function to 5 mins - the max that Vercel Pro can support
 export const maxDuration = 300
 
-export const POST = withErrorHandler(batchCreate)
+export const GET = withErrorHandler(batchCreate)
