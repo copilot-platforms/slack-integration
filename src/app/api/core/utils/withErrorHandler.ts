@@ -30,7 +30,7 @@ export const withErrorHandler = (handler: RequestHandler): RequestHandler => {
     // Execute the handler wrapped in a try... catch block
     try {
       return await handler(req, params)
-    } catch (error) {
+    } catch (error: unknown) {
       const properError = error instanceof APIError ? error.error : error // Hacky way to extract error if the trigger is an APIError
       console.error(properError)
 
