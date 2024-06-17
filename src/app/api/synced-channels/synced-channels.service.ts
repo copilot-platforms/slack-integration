@@ -52,7 +52,11 @@ export class SyncedChannelsService extends BaseService {
 
     for (const channel of unsyncedChannels) {
       // TODO: Use bottleneck along with promises.all to run in parallel without getting ratelimited
-      await this.createSync(copilotService, requestQueue, channel)
+      try {
+        await this.createSync(copilotService, requestQueue, channel)
+      } catch {
+        console.error('Failed to sync channel', channel)
+      }
     }
   }
 
