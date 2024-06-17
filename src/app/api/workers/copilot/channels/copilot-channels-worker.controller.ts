@@ -43,11 +43,7 @@ export const createSyncedSlackChannel = async (req: NextRequest) => {
   } catch (err: unknown) {
     // Mark sync status as failed and throw error. This will cause Zeplo to retry
     await syncedChannelsService.markSyncFailed(channel.syncedChannelId)
-    throw new APIError(
-      httpStatus.INTERNAL_SERVER_ERROR,
-      `Failed to sync channel: ${JSON.stringify(channel)} - ${JSON.stringify(err)}`,
-      err,
-    )
+    throw new APIError(httpStatus.INTERNAL_SERVER_ERROR, `Failed to sync channel: ${channel.channelName}`, err)
   }
   return NextResponse.json({ message: 'Successfully synced channel' })
 }
