@@ -11,6 +11,7 @@ import { RequestQueueService } from '@api/core/services/queue/request-queue.serv
 import { BaseService } from '@api/core/services/base.service'
 import User from '@api/core/models/User.model'
 import { SlackChannelSchema } from '@api/core/types/slackbot'
+import { WORKERS } from '@api/core/constants/routes'
 
 export class CopilotWebhookService extends BaseService {
   constructor(
@@ -59,7 +60,7 @@ export class CopilotWebhookService extends BaseService {
 
     // Create a new Slack channel and send invites to all associated emails
     const requestQueue = new RequestQueueService()
-    await requestQueue.push('/api/workers/copilot/channels/bulk-create', {
+    await requestQueue.push(WORKERS.copilot.channels.create, {
       traceId: sync.id,
       params: {
         token: this.user.token,
@@ -85,7 +86,7 @@ export class CopilotWebhookService extends BaseService {
 
     // Post message to channel conveying that channel has been deleted
     const requestQueue = new RequestQueueService()
-    await requestQueue.push('/api/workers/copilot/channels/delete', {
+    await requestQueue.push(WORKERS.copilot.channels.delete, {
       traceId: sync.id,
       params: { token: this.user.token, data: sync },
     })
@@ -111,7 +112,7 @@ export class CopilotWebhookService extends BaseService {
     })
     // Post message on that particular slack channel by pushing to request queue
     const requestQueueService = new RequestQueueService()
-    await requestQueueService.push('/api/workers/copilot/messages/create', {
+    await requestQueueService.push(WORKERS.copilot.messages.create, {
       traceId: syncedMessage.id,
       params: {
         token: this.user.token,
