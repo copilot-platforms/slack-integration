@@ -3,6 +3,7 @@ import { CreateUpdateSettingsDTO, PatchUpdateSettings } from '@/types/dtos/setti
 import { BaseService } from '@api/core/services/base.service'
 import { Setting } from '@prisma/client'
 import { RequestQueueService } from '@api/core/services/queue/request-queue.service'
+import { WORKERS } from '@api/core/constants/routes'
 
 export class SettingsService extends BaseService {
   async getSettings(): Promise<Setting> {
@@ -52,7 +53,7 @@ export class SettingsService extends BaseService {
 
   runHistoricalChannelSync = async () => {
     const requestQueue = new RequestQueueService()
-    await requestQueue.push('/api/workers/copilot/channels/historical-sync', {
+    await requestQueue.push(WORKERS.copilot.channels.historicalSync, {
       params: {
         token: this.user.token,
       },

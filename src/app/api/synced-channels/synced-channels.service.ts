@@ -9,6 +9,7 @@ import { Channel } from '@api/core/types/message'
 import { ChannelResponse } from '@/types/common'
 import { parseUserIdAndEmail } from '@api/core/utils/users'
 import Bottleneck from 'bottleneck'
+import { WORKERS } from '@api/core/constants/routes'
 
 export class SyncedChannelsService extends BaseService {
   /**
@@ -63,7 +64,7 @@ export class SyncedChannelsService extends BaseService {
     const limitedSyncChannel = limiter.wrap(async (sync: SyncedChannel) => {
       const channel = await this.copilot.getMessageChannel(z.string().parse(sync.copilotChannelId))
       const emails = await this.getChannelParticipantEmails(channel)
-      await requestQueue.push('/api/workers/copilot/channels/create', {
+      await requestQueue.push(WORKERS.copilot.channels.create, {
         traceId: sync.id,
         params: {
           token: this.user.token,
@@ -100,7 +101,12 @@ export class SyncedChannelsService extends BaseService {
     // Add unsynced channels to SyncedChannels table with pending status
     const copilotService = new CopilotWebhookService(this.user, settings)
     for (const channel of unsyncedChannels) {
-      await this.createSync(copilotService, channel)
+      // TODO: Use bottleneck along with promises.all to run in parallel without getting ratelimited
+      try {
+        await this.createSync(copilotService, channel)
+      } catch {
+        console.error('Failed to sync channel', channel)
+      }
     }
   }
 
