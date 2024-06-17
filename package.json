@@ -37,6 +37,7 @@
     "@emotion/styled": "^11.11.5",
     "@mui/material": "^5.15.17",
     "@prisma/client": "^5.13.0",
+    "@slack/web-api": "^7.0.4",
     "@vercel/postgres": "^0.8.0",
     "copilot-node-sdk": "^2.3.0",
     "formik": "^2.4.6",

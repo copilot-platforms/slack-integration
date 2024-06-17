@@ -10,6 +10,7 @@ import { Heading, SubHeading } from '@/components/Typography'
 import { FormBox, Label, TextInput, Selecter } from '@/components/FormElements'
 import { SyncOption, syncConfigurationOptions, syncOptions } from '@ui/helpers'
 import { DefaultSetting, SelecterOption } from '@/types/settings'
+import { useRouter } from 'next/navigation'
 import { CreateUpdateSettingsDTO, CreateUpdateSettingsSchema } from '@/types/dtos/settings.dto'
 import { runSync, updateBidirectionalSync } from '@/services/settings'
 import { getFirstFieldError } from '@/utils/zod'
@@ -52,6 +53,8 @@ export const SyncForm = ({ token, initialSettings, internalUsers }: SyncFormProp
     resetForm({ values })
   }
 
+  const router = useRouter()
+  const routeToSlackAppInstall = () => window.open('/api/slack/install')
   return (
     <form onSubmit={handleSubmit}>
       <Box id="slack-sync" mb={'38px'}>
@@ -122,13 +125,24 @@ export const SyncForm = ({ token, initialSettings, internalUsers }: SyncFormProp
           create a Slack channel for every single channels in the Messages App and may take several minutes.
         </SubHeading>
 
-        <PrimaryBtn
-          type="submit"
-          isLoading={isSubmitting}
-          disabled={values.isSyncRunning || !values.bidirectionalSlackSync || isSubmitting}
-        >
-          {values.isSyncRunning ? 'Running sync...' : 'Run sync'}
-        </PrimaryBtn>
+        <Box sx={{ display: 'flex', gap: '0.75em' }}>
+          <div>
+            <PrimaryBtn
+              type="submit"
+              isLoading={isSubmitting}
+              disabled={values.isSyncRunning || !values.bidirectionalSlackSync || isSubmitting}
+            >
+              {values.isSyncRunning ? 'Running sync...' : 'Run sync'}
+            </PrimaryBtn>
+          </div>
+          <div>
+            {values.isSyncRunning && (
+              <PrimaryBtn type="button" handleClick={routeToSlackAppInstall}>
+                Add to Slack
+              </PrimaryBtn>
+            )}
+          </div>
+        </Box>
       </Box>
     </form>
   )

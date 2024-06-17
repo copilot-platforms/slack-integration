@@ -6,6 +6,7 @@ import { SlackChannelSchema } from '@api/core/types/slackbot'
 import { CopilotWebhookService } from '@api/webhooks/copilot/copilot.service'
 import { SettingsService } from '@api/settings/settings.service'
 import { Channel } from '@api/core/types/message'
+import { WORKERS } from '@api/core/constants/routes'
 
 export class SyncedChannelsService extends BaseService {
   private markSyncFactory(status: SyncStatus): (id: string, slackChannelId?: string) => Promise<SyncedChannel> {
@@ -51,7 +52,11 @@ export class SyncedChannelsService extends BaseService {
 
     for (const channel of unsyncedChannels) {
       // TODO: Use bottleneck along with promises.all to run in parallel without getting ratelimited
-      await this.createSync(copilotService, requestQueue, channel)
+      try {
+        await this.createSync(copilotService, requestQueue, channel)
+      } catch {
+        console.error('Failed to sync channel', channel)
+      }
     }
   }
 
@@ -67,7 +72,7 @@ export class SyncedChannelsService extends BaseService {
         status: 'pending',
       },
     })
-    await requestQueue.push('/api/workers/copilot/channels/bulk-create', {
+    await requestQueue.push(WORKERS.copilot.channels.create, {
       traceId: sync.id,
       params: {
         token: this.user.token,
