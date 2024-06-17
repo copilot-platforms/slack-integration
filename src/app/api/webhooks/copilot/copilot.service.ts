@@ -46,8 +46,10 @@ export class CopilotWebhookService extends BaseService {
     // Get relavant info to sync this channel to Slack
     const channel = await this.copilot.getMessageChannel(channelInfo.id)
     const targetName = await this.getTargetName(channel)
-    const emails = await this.getChannelParticipantEmails(channel)
-    const channelName = await this.getChannelName(targetName)
+    const [emails, channelName] = await Promise.all([
+      this.getChannelParticipantEmails(channel),
+      this.getChannelName(targetName),
+    ])
 
     // Create channel sync record in SyncedChannels table
     const sync = await this.db.syncedChannel.create({
