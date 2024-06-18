@@ -25,6 +25,8 @@ import {
   ChannelResponseSchema,
   ChannelsResponseSchema,
   ChannelsResponse,
+  InternalUsers,
+  InternalUsersSchema,
 } from '@/types/common'
 import { copilotAPIKey as apiKey } from '@/config'
 
@@ -90,6 +92,10 @@ export class CopilotAPI {
     return CustomFieldResponseSchema.parse(await this.copilot.listCustomFields())
   }
 
+  async getInternalUser(id: string): Promise<InternalUsers> {
+    return InternalUsersSchema.parse(await this.copilot.retrieveInternalUser({ id }))
+  }
+
   async getInternalUsers(): Promise<InternalUsersResponse> {
     return InternalUsersResponseSchema.parse(await this.copilot.listInternalUsers({}))
   }
@@ -100,5 +106,32 @@ export class CopilotAPI {
 
   async getMessageChannels(): Promise<ChannelsResponse> {
     return ChannelsResponseSchema.parse(await this.copilot.listMessageChannels({}))
+  }
+
+  /**
+   * Get the username for a given id. ID can be a client, IU, or company with no way to identify them apart.
+   * @param id User / company id
+   * @returns Formatted name of the client / IU / company
+   */
+  async getUserNameById(id: string): Promise<string> {
+    // Check if user is an IU by using copilot internal users retrieve endpoint
+    try {
+      const internalUser = await this.getInternalUser(id)
+      return `${internalUser.givenName} ${internalUser.familyName}`
+    } catch (_) {}
+    // Check if user id has a matching client
+    try {
+      const client = await this.getClient(id)
+      return `${client.givenName} ${client.familyName}`
+    } catch (_) {} // Continue to next try-catch block
+    // Check if user id has a matching company
+    try {
+      const company = await this.getCompany(id)
+      return company.name
+    } catch (err: unknown) {
+      // No match found for iu / client / company
+      console.error(`No user found by id ${id}`)
+      return ''
+    }
   }
 }

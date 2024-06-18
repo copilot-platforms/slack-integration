@@ -12,7 +12,7 @@ export const POST = async (req: NextRequest) => {
   const message = SyncedMessageSchema.parse(body.data)
   // Send message to slack channel using Slackbot
   const slackbot = new SlackbotService(user)
-  await slackbot.postMessage(message.slackChannelId, message.text)
+  await slackbot.postMessage(message.slackChannelId, message.text, message.senderName)
   // Update status of message in SyncedMessages as success
   const syncedMessagesService = new SyncedMessagesService(user)
   await syncedMessagesService.markSyncComplete(message.syncId)

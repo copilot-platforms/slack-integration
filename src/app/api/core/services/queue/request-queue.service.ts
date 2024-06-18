@@ -1,4 +1,3 @@
-import { vercelConfig, zeploConfig } from '@/config'
 import { ZeploQueueService } from './zeplo-queue.service'
 
 export interface Queueable {

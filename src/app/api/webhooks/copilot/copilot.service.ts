@@ -32,7 +32,7 @@ export class CopilotWebhookService extends BaseService {
       'message.sent': this.handleMessageSent,
     }
     // Fetch  and run appropriate action if event type exists in webhookActions keys, else ignore this webhook event
-    webhookActions[data.eventType as keyof WebhookActions]?.(data)
+    await webhookActions[data.eventType as keyof WebhookActions]?.(data)
   }
 
   /**
@@ -66,7 +66,7 @@ export class CopilotWebhookService extends BaseService {
       traceId: sync.id,
       params: {
         token: this.user.token,
-        data: z.array(SlackChannelSchema).parse([{ syncedChannelId: sync.id, channelName, emails }]),
+        data: SlackChannelSchema.parse({ syncedChannelId: sync.id, channelName, emails }),
       },
     })
   }
@@ -112,6 +112,12 @@ export class CopilotWebhookService extends BaseService {
         status: 'pending',
       },
     })
+
+    // Get sender name, or fallback to fallbackMessagesSenderId if it doesn't exist
+    const senderName =
+      (await this.copilot.getUserNameById(message.senderId)) ||
+      (await this.copilot.getUserNameById(this.settings.fallbackMessageSenderId))
+
     // Post message on that particular slack channel by pushing to request queue
     const requestQueueService = new RequestQueueService()
     await requestQueueService.push(WORKERS.copilot.messages.create, {
@@ -122,6 +128,7 @@ export class CopilotWebhookService extends BaseService {
           syncId: syncedMessage.id,
           text: message.text,
           slackChannelId: syncedMessage.slackChannelId,
+          senderName,
         }),
       },
     })
@@ -136,7 +143,10 @@ export class CopilotWebhookService extends BaseService {
     let defaultName = `${this.settings.slackChannelPrefix}-${kebabify(targetName)}`
     // If name already exists then append a `-2` kind of suffix to make it unique
     const channelNameOccurances = await this.db.syncedChannel.count({
-      where: { slackChannelName: { startsWith: defaultName } },
+      where: {
+        // Get all records WHERE slackChannelName = {defaultName} OR slackChannelName LIKE "{defaultName}-%"
+        OR: [{ slackChannelName: defaultName }, { slackChannelName: { startsWith: `${defaultName}-` } }],
+      },
     })
     if (channelNameOccurances) {
       defaultName += `-${String(channelNameOccurances + 1)}`
@@ -180,11 +190,10 @@ export class CopilotWebhookService extends BaseService {
   getChannelParticipantEmails = async (channel: ChannelResponse): Promise<string[]> => {
     // Get an array of emails of each message channel participant
     const internalUsers = parseUserIdAndEmail((await this.copilot.getInternalUsers()).data)
-    const clients = parseUserIdAndEmail((await this.copilot.getClients()).data)
     const emails: string[] = []
     channel.memberIds.forEach((memberId) => {
       // Fetch email whether it is of an internal user or a client
-      const email = internalUsers[memberId] ?? clients[memberId]
+      const email = internalUsers[memberId]
       email && emails.push(email)
     })
     return emails
