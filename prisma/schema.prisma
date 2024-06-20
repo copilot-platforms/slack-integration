@@ -50,6 +50,8 @@ enum SyncStatus {
 /// Table to track which copilot channels already have a slack integration present
 model SyncedChannel {
   id               String  @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  /// Associated Copilot workspace id
+  workspaceId      String  @db.VarChar(32)
   /// Associated copilot channel ID
   copilotChannelId String? @db.VarChar(36)
   /// Associated slack channel ID
@@ -75,6 +77,8 @@ model SyncedChannel {
 
 model SyncedMessage {
   id               String  @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  /// Associated Copilot workspace id
+  workspaceId      String  @db.VarChar(32)
   /// Associated copilot channel ID
   copilotChannelId String? @db.VarChar(32)
   /// Associated slack channel ID
