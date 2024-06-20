@@ -112,6 +112,7 @@ export class SyncedChannelsService extends BaseService {
     const channelName = await copilotService.getChannelName(targetName)
     await this.db.syncedChannel.create({
       data: {
+        workspaceId: this.user.workspaceId,
         copilotChannelId: channel.id,
         slackChannelName: channelName,
         status: 'pending',
