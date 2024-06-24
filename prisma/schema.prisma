@@ -87,8 +87,6 @@ model SyncedMessage {
   messageId        String  @db.VarChar(255)
   /// Sender ID to track issues in prod
   senderId         String  @db.Uuid
-  /// Event time when an exact message webhook call was received
-  eventTime        String
 
   /// Current status of sync
   status SyncStatus
@@ -100,4 +98,15 @@ model SyncedMessage {
   @@unique([messageId], name: "UQ_SyncedMessages_messageId")
   @@index([messageId], name: "IX_SyncedMessages_messageId")
   @@map("SyncedMessages")
+}
+
+model SyncedSlackMessage {
+  id        String @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  eventTime String
+
+  /// Timestamps
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("SyncedSlackMessages")
 }

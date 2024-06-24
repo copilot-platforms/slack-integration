@@ -26,7 +26,7 @@ export class SyncedMessagesService extends BaseService {
   markSyncFailed = this.markSyncFactory('failed')
 
   async checkIfMessageSynced(eventTime: string): Promise<boolean> {
-    const syncedMessage = await this.db.syncedMessage.findFirst({ where: { eventTime } })
+    const syncedMessage = await this.db.syncedSlackMessage.findFirst({ where: { eventTime } })
     return !!syncedMessage
   }
 }
