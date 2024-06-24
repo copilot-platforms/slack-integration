@@ -54,6 +54,7 @@ export class CopilotWebhookService extends BaseService {
     // Create channel sync record in SyncedChannels table
     const sync = await this.db.syncedChannel.create({
       data: {
+        workspaceId: this.user.workspaceId,
         copilotChannelId: channel.id,
         slackChannelName: channelName,
         status: 'pending',
@@ -105,6 +106,7 @@ export class CopilotWebhookService extends BaseService {
     // Add to SyncedMessages table with status
     const syncedMessage = await this.db.syncedMessage.create({
       data: {
+        workspaceId: this.user.workspaceId,
         messageId: message.id,
         senderId: message.senderId,
         copilotChannelId: message.channelId,

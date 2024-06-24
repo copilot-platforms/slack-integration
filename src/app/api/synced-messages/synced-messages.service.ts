@@ -24,4 +24,9 @@ export class SyncedMessagesService extends BaseService {
    * Marks a message sync as failed
    */
   markSyncFailed = this.markSyncFactory('failed')
+
+  async checkIfMessageSynced(eventTime: string): Promise<boolean> {
+    const syncedMessage = await this.db.syncedMessage.findFirst({ where: { eventTime } })
+    return !!syncedMessage
+  }
 }

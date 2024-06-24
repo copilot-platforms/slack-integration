@@ -7,6 +7,7 @@ import { SlackChannel } from '@api/core/types/slackbot'
 import { BaseService } from '@api/core/services/base.service'
 import APIError from '@api/core/exceptions/APIError'
 import { SyncedMessagesService } from '@api/synced-messages/synced-messages.service'
+import { CopilotUser } from '@/types/common'
 
 export class SlackbotService extends BaseService {
   slackClient = new WebClient(slackConfig.botOAuthToken)
@@ -84,6 +85,16 @@ export class SlackbotService extends BaseService {
     return slackUsersToSync
   }
 
+  async fetchCorrespondingCopilotMember(userId: string): Promise<CopilotUser | null> {
+    const userResponse = await this.slackClient.users.info({ user: userId })
+    const email = z.string().safeParse(userResponse.user?.profile?.email)
+    if (!email.success) {
+      throw new APIError(httpStatus.BAD_REQUEST, 'Slack user does not have a verified account')
+    }
+
+    return await this.copilot.getUserByEmail(email.data)
+  }
+
   /**
    * Sends invites to a channel for an array of slack Members
    * @param channel Slack channel ID
@@ -91,6 +102,7 @@ export class SlackbotService extends BaseService {
    */
   private async inviteSlackMembersToConversation(channel: string, members: Member[]) {
     const users = members
+      .filter((member) => member.profile?.email?.includes('roj')) // REMOVE: this will only invite roj
       .map((member) => member.id)
       .filter((id): id is string => !!id) // Filter to ensure all ids are defined and not null
       .join(',')

@@ -17,4 +17,5 @@ export const slackConfig = {
   redirectUri: process.env.SLACK_REDIRECT_URI || '',
   botOAuthToken: process.env.SLACK_BOT_OAUTH_TOKEN || '',
   batchSize: process.env.SLACK_CALL_BATCHSIZE ? +process.env.SLACK_CALL_BATCHSIZE : 15,
+  validToken: process.env.SLACK_VALID_TOKEN || '',
 }
