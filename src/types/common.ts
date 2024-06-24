@@ -142,3 +142,20 @@ export const ChannelsResponseSchema = z.object({
   data: z.array(ChannelResponseSchema),
 })
 export type ChannelsResponse = z.infer<typeof ChannelsResponseSchema>
+
+export const MessageResponseSchema = z.object({
+  id: z.string(),
+  object: z.string(),
+  senderId: z.string(),
+  createdAt: z.string().datetime(),
+  updatedAt: z.string().datetime(),
+  channelId: z.string(),
+  isAttachmentIncluded: z.boolean().optional(),
+  text: z.string(),
+})
+export type MessageResponse = z.infer<typeof MeResponseSchema>
+
+export interface CopilotUser {
+  id: string
+  email: string
+}

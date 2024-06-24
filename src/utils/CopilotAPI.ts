@@ -27,6 +27,8 @@ import {
   ChannelsResponse,
   InternalUsers,
   InternalUsersSchema,
+  MessageResponseSchema,
+  CopilotUser,
 } from '@/types/common'
 import { copilotAPIKey as apiKey } from '@/config'
 
@@ -106,6 +108,20 @@ export class CopilotAPI {
 
   async getMessageChannels(): Promise<ChannelsResponse> {
     return ChannelsResponseSchema.parse(await this.copilot.listMessageChannels({}))
+  }
+
+  async sendMessage(senderId: string, channelId: string, text: string) {
+    console.log(senderId, channelId, text)
+    return MessageResponseSchema.parse(await this.copilot.sendMessage({ requestBody: { channelId, text, senderId } }))
+  }
+
+  async getUserByEmail(email: string): Promise<CopilotUser | null> {
+    const internalUsers = await this.getInternalUsers()
+    const matchingInternalUser = internalUsers.data.find((user) => user.email === email)
+    if (matchingInternalUser) return matchingInternalUser
+
+    const clients = await this.getClients()
+    return clients.data?.find((user) => user.email === email) ?? null
   }
 
   /**

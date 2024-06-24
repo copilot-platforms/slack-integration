@@ -1,5 +1,4 @@
-import { NextRequest, NextResponse } from 'next/server'
+import { withErrorHandler } from '@api/core/utils/withErrorHandler'
+import { handleSlackWebhookRequest } from '@api/webhooks/slack/slack.controller'
 
-export const POST = (req: NextRequest) => {
-  return NextResponse.json({ message: 'hello' })
-}
+export const POST = withErrorHandler(handleSlackWebhookRequest)
