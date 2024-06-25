@@ -2,7 +2,7 @@ import { ConversationsCreateResponse, WebClient } from '@slack/web-api'
 import { Member } from '@slack/web-api/dist/types/response/UsersListResponse'
 import httpStatus from 'http-status'
 import { z } from 'zod'
-import { slackConfig } from '@/config'
+import { flags, slackConfig } from '@/config'
 import { SlackChannel } from '@api/core/types/slackbot'
 import { BaseService } from '@api/core/services/base.service'
 import APIError from '@api/core/exceptions/APIError'
@@ -106,8 +106,12 @@ export class SlackbotService extends BaseService {
    * @param members Array of slack Member to send invites
    */
   private async inviteSlackMembersToConversation(channel: string, members: Member[]) {
+    if (flags.shouldSyncOnlyDev) {
+      // Dev mode to only send invites to a particular developer
+      members = members.filter((member) => member.profile?.email?.includes(flags.shouldSyncOnlyDevKeyword))
+    }
+
     const users = members
-      .filter((member) => member.profile?.email?.includes('roj')) // REMOVE: this will only invite roj
       .map((member) => member.id)
       .filter((id): id is string => !!id) // Filter to ensure all ids are defined and not null
       .join(',')

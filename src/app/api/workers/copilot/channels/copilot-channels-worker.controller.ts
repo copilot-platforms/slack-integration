@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { slackConfig } from '@/config'
+import { flags, slackConfig } from '@/config'
 import httpStatus from 'http-status'
 import User from '@api/core/models/User.model'
 import { SlackbotService } from '@api/core/services/slackbot.service'
@@ -9,6 +9,7 @@ import APIError from '@api/core/exceptions/APIError'
 import { SyncedChannelsService } from '@api/synced-channels/synced-channels.service'
 import { z } from 'zod'
 import { DeleteSyncedChannelSchema } from '@api/core/types/message'
+import { checkIfFeatureFlagged } from '@/utils/flags'
 
 export const batchCreate = async (req: NextRequest) => {
   const url = new URL(req.url)
@@ -49,6 +50,8 @@ export const createSyncedSlackChannel = async (req: NextRequest) => {
 }
 
 export const runHistoricalSync = async (req: NextRequest) => {
+  checkIfFeatureFlagged(!flags.disableHistoricalSync)
+
   const reqBody = await req.json()
   const token = z.string().parse(reqBody.token)
   const user = await User.authenticateToken(token)
