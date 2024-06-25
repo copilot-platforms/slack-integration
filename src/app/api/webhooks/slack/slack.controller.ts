@@ -15,5 +15,5 @@ export const handleSlackWebhookRequest = async (req: NextRequest) => {
   const user = await User.authenticateToken(slackConfig.validToken)
   const slackService = new SlackWebhooksService(user)
   await slackService.pushMessageToCopilot(data)
-  return NextResponse.json(body)
+  return NextResponse.json((body as any).challenge)
 }
