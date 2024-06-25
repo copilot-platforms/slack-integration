@@ -62,6 +62,11 @@ export class SyncedChannelsService extends BaseService {
     })
     const requestQueue = new RequestQueueService()
     const limitedSyncChannel = limiter.wrap(async (sync: SyncedChannel) => {
+      const hasWorkspaceInstalledSlackbot = await this.db.syncedWorkspaces.findFirst({
+        where: { workspaceId: this.user.workspaceId },
+      })
+      if (!hasWorkspaceInstalledSlackbot) return
+
       const channel = await this.copilot.getMessageChannel(z.string().parse(sync.copilotChannelId))
       const emails = await this.getChannelParticipantEmails(channel)
       await requestQueue.push(WORKERS.copilot.channels.create, {

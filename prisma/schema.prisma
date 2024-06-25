@@ -110,3 +110,12 @@ model SyncedSlackMessage {
 
   @@map("SyncedSlackMessages")
 }
+
+model SyncedWorkspaces {
+  id          String @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  workspaceId String @db.VarChar(32)
+
+  /// Timestamps
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}

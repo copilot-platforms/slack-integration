@@ -53,8 +53,7 @@ export const SyncForm = ({ token, initialSettings, internalUsers }: SyncFormProp
     resetForm({ values })
   }
 
-  const router = useRouter()
-  const routeToSlackAppInstall = () => window.open('/api/slack/install')
+  const routeToSlackAppInstall = () => window.open(`/api/slack/install?token=${token}`)
   return (
     <form onSubmit={handleSubmit}>
       <Box id="slack-sync" mb={'38px'}>
