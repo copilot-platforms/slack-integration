@@ -19,3 +19,11 @@ export const slackConfig = {
   batchSize: process.env.SLACK_CALL_BATCHSIZE ? +process.env.SLACK_CALL_BATCHSIZE : 15,
   validToken: process.env.SLACK_VALID_TOKEN || '',
 }
+
+export const flags = {
+  shouldSyncOnlyDev: !!+(process.env.FLAG_SHOULD_SYNC_ONLY_DEV || 0),
+  shouldSyncOnlyDevKeyword: process.env.FLAG_SHOULD_SYNC_ONLY_DEV_KEYWORD || '',
+  disableHistoricalSync: !!+(process.env.FLAG_DISABLE_HISTORICAL_SYNC || 0),
+  disableChannelSync: !!+(process.env.FLAG_DISABLE_CHANNEL_SYNC || 0),
+  disableMessageSync: !!+(process.env.FLAG_DISABLE_MESSAGE_SYNC || 0),
+}

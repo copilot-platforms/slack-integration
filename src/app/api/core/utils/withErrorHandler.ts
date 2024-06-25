@@ -31,6 +31,9 @@ export const withErrorHandler = (handler: RequestHandler): RequestHandler => {
     try {
       return await handler(req, params)
     } catch (error: unknown) {
+      if (error instanceof APIError && error.status === httpStatus.OK) {
+        return NextResponse.json({ message: error.message })
+      }
       const properError = error instanceof APIError && error.error ? error.error : error // Hacky way to extract error if the trigger is an APIError
       console.error(properError)
 

@@ -12,6 +12,8 @@ import { BaseService } from '@api/core/services/base.service'
 import User from '@api/core/models/User.model'
 import { SlackChannelSchema } from '@api/core/types/slackbot'
 import { WORKERS } from '@api/core/constants/routes'
+import { checkIfFeatureFlagged } from '@/utils/flags'
+import { flags } from '@/config'
 
 export class CopilotWebhookService extends BaseService {
   constructor(
@@ -49,6 +51,7 @@ export class CopilotWebhookService extends BaseService {
    * @param data Parsed WebhookEvent related to this event
    */
   private handleChannelCreated = async (data: WebhookEvent) => {
+    checkIfFeatureFlagged(!flags.disableChannelSync)
     // Extract newly created channel info from webhook payload
     const channelInfo = ChannelSchema.parse(data.data)
     await this.checkIfSynced(channelInfo.id)
@@ -88,6 +91,7 @@ export class CopilotWebhookService extends BaseService {
   }
 
   private handleChannelDeleted = async (data: WebhookEvent) => {
+    checkIfFeatureFlagged(!flags.disableChannelSync)
     const channelInfo = ChannelSchema.parse(data.data)
 
     const channel = await this.copilot.getMessageChannel(channelInfo.id)
@@ -112,6 +116,7 @@ export class CopilotWebhookService extends BaseService {
   }
 
   private handleMessageSent = async (data: WebhookEvent) => {
+    checkIfFeatureFlagged(!flags.disableMessageSync)
     // Fetch slack channel id from db
     const message = MessageSchema.parse(data.data)
     const channel = await this.db.syncedChannel.findFirstOrThrow({
