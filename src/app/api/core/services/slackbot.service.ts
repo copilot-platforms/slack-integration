@@ -54,6 +54,11 @@ export class SlackbotService extends BaseService {
    * @param senderName Name of the sender on behalf of which the Slackbot will post
    */
   async postMessage(channel: string, text: string, senderName?: string | null) {
+    const stopMessageSyncKeywords = [' has joined the channel', 'Sent on slack']
+    for (const message of stopMessageSyncKeywords) {
+      if (text.includes(message)) return
+    }
+
     if (senderName) {
       text = `${senderName} sent a message in Copilot: \n\n${text}`
     }

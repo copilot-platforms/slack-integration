@@ -31,7 +31,7 @@ export const withErrorHandler = (handler: RequestHandler): RequestHandler => {
     try {
       return await handler(req, params)
     } catch (error: unknown) {
-      const properError = error instanceof APIError ? error.error : error // Hacky way to extract error if the trigger is an APIError
+      const properError = error instanceof APIError && error.error ? error.error : error // Hacky way to extract error if the trigger is an APIError
       console.error(properError)
 
       // Default staus and message for JSON error response

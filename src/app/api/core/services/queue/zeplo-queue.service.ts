@@ -10,7 +10,7 @@ export class ZeploQueueService implements Queueable {
       method: 'POST',
       headers: {
         'X-Zeplo-Token': zeploConfig.apiKey,
-        'X-Zeplo-Retry': '0', // Move retry logic away from Zeplo layer for better control
+        // 'X-Zeplo-Retry': '0', // Move retry logic away from Zeplo layer for better control
         'X-Zeplo-Trace': opts?.traceId || '',
         'X-Zeplo-Env': vercelConfig.env,
       },

@@ -12,3 +12,8 @@ export const WORKERS = {
     },
   },
 }
+
+export const noSyncTriggerKeywords = [
+  '> has joined the channel', // Prevents recursive channel joined messages being sent
+  ' sent a message in Copilot: ', // Prevents an infinite loop sending messages constantly back and forth between slack and copilot
+]

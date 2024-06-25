@@ -2,6 +2,7 @@ import { z } from 'zod'
 
 export const SlackChannelSchema = z.object({
   syncedChannelId: z.string().uuid(),
+  copilotChannelId: z.string().optional(),
   channelName: z.string(),
   emails: z.array(z.string()),
 })

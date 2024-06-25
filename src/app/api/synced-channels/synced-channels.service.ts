@@ -39,9 +39,9 @@ export class SyncedChannelsService extends BaseService {
   /**
    * Checks if a given record for SyncedChannel id is synced successfully
    */
-  async checkIfSynced(id: string): Promise<Boolean> {
+  async checkIfSynced(copilotChannelId: string): Promise<Boolean> {
     return !!(await this.db.syncedChannel.findFirst({
-      where: { id, status: 'success' },
+      where: { copilotChannelId, status: 'success', deletedAt: null },
     }))
   }
 
@@ -68,7 +68,12 @@ export class SyncedChannelsService extends BaseService {
         traceId: sync.id,
         params: {
           token: this.user.token,
-          data: SlackChannelSchema.parse({ syncedChannelId: sync.id, channelName: sync.slackChannelName, emails }),
+          data: SlackChannelSchema.parse({
+            syncedChannelId: sync.id,
+            channelName: sync.slackChannelName,
+            emails,
+            copilotChannelId: sync.copilotChannelId,
+          }),
         },
       })
     })

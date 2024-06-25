@@ -111,7 +111,6 @@ export class CopilotAPI {
   }
 
   async sendMessage(senderId: string, channelId: string, text: string) {
-    console.log(senderId, channelId, text)
     return MessageResponseSchema.parse(await this.copilot.sendMessage({ requestBody: { channelId, text, senderId } }))
   }
 

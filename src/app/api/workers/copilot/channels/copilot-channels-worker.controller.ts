@@ -34,7 +34,7 @@ export const createSyncedSlackChannel = async (req: NextRequest) => {
   try {
     // Check if channel is already synced with a 'success' status. If so, skip it
     // This will be helpful for retries
-    const isAlreadySynced = await syncedChannelsService.checkIfSynced(channel.syncedChannelId)
+    const isAlreadySynced = await syncedChannelsService.checkIfSynced(channel.copilotChannelId || '')
     if (isAlreadySynced) return NextResponse.json({ message: 'Channel has already been synced' })
 
     // Create new channel and update status to 'success' if successful.

@@ -35,6 +35,15 @@ export class CopilotWebhookService extends BaseService {
     await webhookActions[data.eventType as keyof WebhookActions]?.(data)
   }
 
+  private checkIfSynced = async (copilotChannelId: string): Promise<void> => {
+    const isDuplicateWebhookCall = !!(await this.db.syncedChannel.findFirst({
+      where: { copilotChannelId, status: 'success', deletedAt: null },
+    }))
+    if (isDuplicateWebhookCall) {
+      throw new APIError(httpStatus.BAD_REQUEST, 'Ignoring recurring webhook call')
+    }
+  }
+
   /**
    * Handle webhook envent for `messageChannel.created` from Copilot Messages app
    * @param data Parsed WebhookEvent related to this event
@@ -42,6 +51,7 @@ export class CopilotWebhookService extends BaseService {
   private handleChannelCreated = async (data: WebhookEvent) => {
     // Extract newly created channel info from webhook payload
     const channelInfo = ChannelSchema.parse(data.data)
+    await this.checkIfSynced(channelInfo.id)
 
     // Get relavant info to sync this channel to Slack
     const channel = await this.copilot.getMessageChannel(channelInfo.id)
@@ -67,13 +77,19 @@ export class CopilotWebhookService extends BaseService {
       traceId: sync.id,
       params: {
         token: this.user.token,
-        data: SlackChannelSchema.parse({ syncedChannelId: sync.id, channelName, emails }),
+        data: SlackChannelSchema.parse({
+          syncedChannelId: sync.id,
+          channelName,
+          emails,
+          copilotChannelId: sync.copilotChannelId,
+        }),
       },
     })
   }
 
   private handleChannelDeleted = async (data: WebhookEvent) => {
     const channelInfo = ChannelSchema.parse(data.data)
+
     const channel = await this.copilot.getMessageChannel(channelInfo.id)
 
     // Remove from SyncedChannels table
