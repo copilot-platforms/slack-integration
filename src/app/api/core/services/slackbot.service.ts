@@ -106,11 +106,10 @@ export class SlackbotService extends BaseService {
    * @param members Array of slack Member to send invites
    */
   private async inviteSlackMembersToConversation(channel: string, members: Member[]) {
-    members = members.filter((member) => member.profile?.email?.includes('roj'))
-    // if (flags.shouldSyncOnlyDev) {
-    //   // Dev mode to only send invites to a particular developer
-    //   members = members.filter((member) => member.profile?.email?.includes(flags.shouldSyncOnlyDevKeyword))
-    // }
+    if (flags.shouldSyncOnlyDev) {
+      // Dev mode to only send invites to a particular developer
+      members = members.filter((member) => member.profile?.email?.includes(flags.shouldSyncOnlyDevKeyword))
+    }
 
     const users = members
       .map((member) => member.id)
