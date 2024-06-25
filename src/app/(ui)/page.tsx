@@ -6,6 +6,8 @@ import { CopilotAPI } from '@/utils/CopilotAPI'
 import { DefaultSetting } from '@/types/settings'
 import { fetchSettings, getInternalUsersOptions, getUserPayload } from '@/actions/settings'
 import { SyncForm } from '@ui/SyncForm'
+import { SyncedWorkspacesService } from '../api/synced-workspaces/synced-workspaces.service'
+import User from '../api/core/models/User.model'
 
 export default async function Home({ searchParams }: { searchParams: { token: string } }) {
   const tokenParsed = z.string().safeParse(searchParams.token)
@@ -23,12 +25,19 @@ export default async function Home({ searchParams }: { searchParams: { token: st
   if (!currentUser) {
     return <div>Failed to validate internal user</div>
   }
+  const syncedWorkspacesService = new SyncedWorkspacesService(await User.authenticateToken(token))
+  const isSlackbotInstalled = await syncedWorkspacesService.checkSynced()
 
   const settings: Setting | DefaultSetting = settingsData || getDefaultSettings(currentUser.internalUserId)
 
   return (
     <PageContainer>
-      <SyncForm token={token} initialSettings={settings} internalUsers={internalUsers} />
+      <SyncForm
+        isSlackbotInstalled={isSlackbotInstalled}
+        token={token}
+        initialSettings={settings}
+        internalUsers={internalUsers}
+      />
     </PageContainer>
   )
 }

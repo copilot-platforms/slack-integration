@@ -1,7 +1,11 @@
 import { BaseService } from '@api/core/services/base.service'
 
 export class SyncedWorkspacesService extends BaseService {
-  async addAsSynced(workspaceId: string) {
-    await this.db.syncedWorkspaces.create({ data: { workspaceId } })
+  async checkSynced() {
+    return !!this.db.syncedWorkspaces.findFirst({ where: { workspaceId: this.user.workspaceId } })
+  }
+
+  async addAsSynced() {
+    await this.db.syncedWorkspaces.create({ data: { workspaceId: this.user.workspaceId } })
   }
 }

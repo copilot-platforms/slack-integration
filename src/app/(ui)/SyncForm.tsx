@@ -16,12 +16,14 @@ import { runSync, updateBidirectionalSync } from '@/services/settings'
 import { getFirstFieldError } from '@/utils/zod'
 
 interface SyncFormProps {
+  isSlackbotInstalled: boolean
   token: string
   initialSettings: Setting | DefaultSetting
   internalUsers: SelecterOption[]
 }
 
-export const SyncForm = ({ token, initialSettings, internalUsers }: SyncFormProps) => {
+export const SyncForm = ({ token, isSlackbotInstalled, initialSettings, internalUsers }: SyncFormProps) => {
+  const [slackbotInstalled, setSlackbotInstalled] = useState(isSlackbotInstalled)
   const [isBidirectionalSyncUpdating, setIsBidirectionalSyncUpdating] = useState(false)
 
   const validate = (values: unknown) => {
@@ -53,7 +55,12 @@ export const SyncForm = ({ token, initialSettings, internalUsers }: SyncFormProp
     resetForm({ values })
   }
 
-  const routeToSlackAppInstall = () => window.open(`/api/slack/install?token=${token}`)
+  const routeToSlackAppInstall = async () => {
+    window.open(`/api/slack/install?token=${token}`)
+    setTimeout(() => {
+      setSlackbotInstalled(true)
+    }, 5000)
+  }
   return (
     <form onSubmit={handleSubmit}>
       <Box id="slack-sync" mb={'38px'}>
@@ -129,13 +136,13 @@ export const SyncForm = ({ token, initialSettings, internalUsers }: SyncFormProp
             <PrimaryBtn
               type="submit"
               isLoading={isSubmitting}
-              disabled={values.isSyncRunning || !values.bidirectionalSlackSync || isSubmitting}
+              disabled={values.isSyncRunning || !values.bidirectionalSlackSync || isSubmitting || !slackbotInstalled}
             >
               {values.isSyncRunning ? 'Running sync...' : 'Run sync'}
             </PrimaryBtn>
           </div>
           <div>
-            {values.isSyncRunning && (
+            {values.bidirectionalSlackSync && (
               <PrimaryBtn type="button" handleClick={routeToSlackAppInstall}>
                 Add to Slack
               </PrimaryBtn>
