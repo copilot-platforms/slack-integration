@@ -4,5 +4,5 @@ import httpStatus from 'http-status'
 export const checkIfFeatureFlagged = (flag: boolean) => {
   if (flag) return
 
-  throw new APIError(httpStatus.NOT_FOUND, 'The request resource does not exist')
+  throw new APIError(httpStatus.OK, 'This feature is not turned on')
 }
