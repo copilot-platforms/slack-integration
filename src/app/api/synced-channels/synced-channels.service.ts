@@ -65,7 +65,10 @@ export class SyncedChannelsService extends BaseService {
       const hasWorkspaceInstalledSlackbot = await this.db.syncedWorkspaces.findFirst({
         where: { workspaceId: this.user.workspaceId },
       })
-      if (!hasWorkspaceInstalledSlackbot) return
+      if (!hasWorkspaceInstalledSlackbot) {
+        console.error('Slackbot not installed in workspace')
+        return
+      }
 
       const channel = await this.copilot.getMessageChannel(z.string().parse(sync.copilotChannelId))
       const emails = await this.getChannelParticipantEmails(channel)
