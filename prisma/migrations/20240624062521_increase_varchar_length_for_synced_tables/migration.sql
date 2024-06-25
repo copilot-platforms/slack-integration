@@ -1,0 +1,7 @@
+-- AlterTable
+ALTER TABLE "SyncedChannels" ALTER COLUMN "copilotChannelId" SET DATA TYPE VARCHAR(64),
+ALTER COLUMN "slackChannelId" SET DATA TYPE VARCHAR(64);
+
+-- AlterTable
+ALTER TABLE "SyncedMessages" ALTER COLUMN "copilotChannelId" SET DATA TYPE VARCHAR(64),
+ALTER COLUMN "slackChannelId" SET DATA TYPE VARCHAR(64);
