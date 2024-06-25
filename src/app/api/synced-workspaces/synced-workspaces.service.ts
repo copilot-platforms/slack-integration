@@ -2,7 +2,7 @@ import { BaseService } from '@api/core/services/base.service'
 
 export class SyncedWorkspacesService extends BaseService {
   async checkSynced() {
-    return !!this.db.syncedWorkspaces.findFirst({ where: { workspaceId: this.user.workspaceId } })
+    return !!(await this.db.syncedWorkspaces.findFirst({ where: { workspaceId: this.user.workspaceId } }))
   }
 
   async addAsSynced() {
