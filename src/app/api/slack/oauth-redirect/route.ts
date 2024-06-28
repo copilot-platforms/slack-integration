@@ -23,7 +23,7 @@ export const GET = async (req: NextRequest) => {
       client_id: slackConfig.clientId,
       client_secret: slackConfig.clientSecret,
       code,
-      redirect_uri: slackConfig.redirectUri,
+      redirect_uri: slackConfig.redirectUri + `?workspaceId=${workspaceId}`,
     })
     console.log('resp', response)
 
