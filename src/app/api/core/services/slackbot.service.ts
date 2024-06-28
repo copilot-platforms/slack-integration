@@ -26,6 +26,7 @@ export class SlackbotService extends BaseService {
 
     let createResponse: ConversationsCreateResponse
     try {
+      console.log('team', syncedWorkspace?.slackTeamId)
       createResponse = await this.slackClient.conversations.create({
         name: channel.channelName,
         // Make channels public as per current requirements
