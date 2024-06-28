@@ -62,7 +62,7 @@ export class SyncedChannelsService extends BaseService {
     })
     const requestQueue = new RequestQueueService()
     const limitedSyncChannel = limiter.wrap(async (sync: SyncedChannel) => {
-      const hasWorkspaceInstalledSlackbot = await this.db.syncedWorkspaces.findFirst({
+      const hasWorkspaceInstalledSlackbot = await this.db.syncedWorkspace.findFirst({
         where: { workspaceId: this.user.workspaceId },
       })
       if (!hasWorkspaceInstalledSlackbot) {
