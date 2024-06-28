@@ -8,6 +8,7 @@ import { BaseService } from '@api/core/services/base.service'
 import APIError from '@api/core/exceptions/APIError'
 import { SyncedMessagesService } from '@api/synced-messages/synced-messages.service'
 import { CopilotUser } from '@/types/common'
+import { SyncedWorkspacesService } from '../../synced-workspaces/synced-workspaces.service'
 
 export class SlackbotService extends BaseService {
   slackClient = new WebClient(slackConfig.botOAuthToken)
@@ -20,12 +21,16 @@ export class SlackbotService extends BaseService {
   async createChannel(channel: SlackChannel): Promise<string> {
     console.info(`Creating channel ${channel.channelName}`)
 
+    const syncedWorkspaceService = new SyncedWorkspacesService(this.user)
+    const syncedWorkspace = await syncedWorkspaceService.getSyncedWorkspace()
+
     let createResponse: ConversationsCreateResponse
     try {
       createResponse = await this.slackClient.conversations.create({
         name: channel.channelName,
         // Make channels public as per current requirements
         is_private: false,
+        team_id: z.string().parse(syncedWorkspace?.slackTeamId),
       })
     } catch (e: unknown) {
       console.error(e)
@@ -79,7 +84,10 @@ export class SlackbotService extends BaseService {
    * @returns Slack Members with email addresses in `emails`
    */
   private async fetchSlackMembers(emails: string[]): Promise<Member[]> {
-    const slackUsers = await this.slackClient.users.list({})
+    const syncedWorkspaceService = new SyncedWorkspacesService(this.user)
+    const syncedWorkspace = await syncedWorkspaceService.getSyncedWorkspace()
+
+    const slackUsers = await this.slackClient.users.list({ team_id: z.string().parse(syncedWorkspace?.slackTeamId) })
     if (!slackUsers.members || !slackUsers.members.length) {
       return []
     }
