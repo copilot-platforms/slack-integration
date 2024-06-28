@@ -13,6 +13,6 @@ export const GET = async (req: NextRequest) => {
   const encodedRedirectUri = encodeURIComponent(`${redirectUri}?workspaceId=${user.workspaceId}`)
   console.log('encodeddd', encodedRedirectUri)
   return NextResponse.redirect(
-    `https://slack.com/oauth/v2/authorize?client_id=${clientId}&scope=chat:write,groups:write,channels:manage,groups:write.invites&redirect_uri=${encodedRedirectUri}`,
+    `https://slack.com/oauth/v2/authorize?client_id=${clientId}&scope=chat:write,groups:write,channels:manage,groups:write.invites&redirect_uri=${redirectUri}`,
   )
 }
