@@ -52,8 +52,10 @@ export class CopilotWebhookService extends BaseService {
    */
   private handleChannelCreated = async (data: WebhookEvent) => {
     checkIfFeatureFlagged(!flags.disableChannelSync)
+    console.log('dta', data)
     // Extract newly created channel info from webhook payload
     const channelInfo = ChannelSchema.parse(data.data)
+    console.log('chnl', channelInfo)
     await this.checkIfSynced(channelInfo.id)
 
     // Get relavant info to sync this channel to Slack
