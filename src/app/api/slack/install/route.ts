@@ -10,7 +10,7 @@ export const GET = async (req: NextRequest) => {
   const { clientId, redirectUri } = slackConfig
   const syncedWorkspacesService = new SyncedWorkspacesService(user)
   await syncedWorkspacesService.addAsSynced()
-  const encodedRedirectUri = encodeURIComponent(`${redirectUri}?workspace=${user.workspaceId}`)
+  const encodedRedirectUri = encodeURIComponent(`${redirectUri}?workspaceId=${user.workspaceId}`)
   console.log('encodeddd', encodedRedirectUri)
   return NextResponse.redirect(
     `https://slack.com/oauth/v2/authorize?client_id=${clientId}&scope=chat:write,groups:write,channels:manage,groups:write.invites&redirect_uri=${encodedRedirectUri}`,
