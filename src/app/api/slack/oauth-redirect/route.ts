@@ -15,12 +15,17 @@ export const GET = async (req: NextRequest) => {
   }
 
   try {
+    console.log(slackConfig.clientId)
+    console.log(slackConfig.clientId)
+    console.log(code)
+    console.log(slackConfig.redirectUri)
     const response = await slackClient.oauth.v2.access({
       client_id: slackConfig.clientId,
       client_secret: slackConfig.clientSecret,
       code,
       redirect_uri: slackConfig.redirectUri,
     })
+    console.log('resp', response)
 
     const { access_token, team } = response
 
@@ -29,6 +34,6 @@ export const GET = async (req: NextRequest) => {
 
     return NextResponse.redirect(`${apiUrl}/oauth-success`)
   } catch (error) {
-    throw new APIError(httpStatus.BAD_REQUEST, 'Error during OAuth verification')
+    throw new APIError(httpStatus.BAD_REQUEST, 'Error during OAuth verification', error)
   }
 }
