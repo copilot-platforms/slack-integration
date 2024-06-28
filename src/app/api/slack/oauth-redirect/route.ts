@@ -7,6 +7,8 @@ import httpStatus from 'http-status'
 export const GET = async (req: NextRequest) => {
   const slackClient = new WebClient()
   const code = req.nextUrl.searchParams.get('code')
+  const workspaceId = req.nextUrl.searchParams.get('workspaceId')
+  console.log('wsid2', workspaceId)
 
   if (!code) {
     throw new APIError(httpStatus.BAD_REQUEST, 'Missing oauth code')
