@@ -19,18 +19,18 @@ export class SlackbotService extends BaseService {
    * @returns Slack channel ID of newly created channel
    */
   async createChannel(channel: SlackChannel): Promise<string> {
-    console.info(`Creating channel ${channel.channelName}`)
-
     const syncedWorkspaceService = new SyncedWorkspacesService(this.user)
     const syncedWorkspace = await syncedWorkspaceService.getSyncedWorkspace()
+    console.info(`Creating channel ${channel.channelName}`)
+    const slackClient = new WebClient(z.string().parse(syncedWorkspace?.slackAccessToken))
 
     let createResponse: ConversationsCreateResponse
     try {
-      createResponse = await this.slackClient.conversations.create({
+      createResponse = await slackClient.conversations.create({
         name: channel.channelName,
         // Make channels public as per current requirements
         is_private: false,
-        // team_id: z.string().parse(syncedWorkspace?.slackTeamId),
+        team_id: z.string().parse(syncedWorkspace?.slackTeamId),
         token: z.string().parse(syncedWorkspace?.slackAccessToken),
       })
     } catch (e: unknown) {
