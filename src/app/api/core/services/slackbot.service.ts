@@ -31,7 +31,7 @@ export class SlackbotService extends BaseService {
         // Make channels public as per current requirements
         is_private: false,
         // team_id: z.string().parse(syncedWorkspace?.slackTeamId),
-        // token: z.string().parse(syncedWorkspace?.slackAccessToken),
+        token: z.string().parse(syncedWorkspace?.slackAccessToken),
       })
     } catch (e: unknown) {
       console.error(e)
