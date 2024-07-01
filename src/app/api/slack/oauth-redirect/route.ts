@@ -35,7 +35,7 @@ export const GET = async (req: NextRequest) => {
     if (!team?.id) {
       throw new APIError(httpStatus.BAD_REQUEST, "Couldn't save team id to synced workspaces")
     }
-    await syncedWorkspacesService.addTeamIdToSyncedWorkspace(z.string().parse(team.id), z.string().parse(access_token))
+    await syncedWorkspacesService.addSlackMetadata(z.string().parse(team.id), z.string().parse(access_token))
 
     return NextResponse.redirect(`${apiUrl}/oauth-success`)
   } catch (error) {

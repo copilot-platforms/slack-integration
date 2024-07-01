@@ -26,12 +26,12 @@ export class SlackbotService extends BaseService {
 
     let createResponse: ConversationsCreateResponse
     try {
-      console.log('team', syncedWorkspace?.slackTeamId)
       createResponse = await this.slackClient.conversations.create({
         name: channel.channelName,
         // Make channels public as per current requirements
         is_private: false,
         team_id: z.string().parse(syncedWorkspace?.slackTeamId),
+        token: z.string().parse(syncedWorkspace?.slackAccessToken),
       })
     } catch (e: unknown) {
       console.error(e)
