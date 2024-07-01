@@ -39,8 +39,10 @@ export class SlackbotService extends BaseService {
     }
     const slackChannelId = z.string().parse(createResponse.channel?.id)
     const syncableMembers = await this.fetchSlackMembers(channel.emails)
+    console.log('syncmem', syncableMembers)
     // Invite syncableMembers to slackChannelId here
     await this.inviteSlackMembersToConversation(slackChannelId, syncableMembers)
+    console.log('invited!!')
     return slackChannelId
   }
 
