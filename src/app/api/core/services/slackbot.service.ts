@@ -22,17 +22,17 @@ export class SlackbotService extends BaseService {
     const syncedWorkspaceService = new SyncedWorkspacesService(this.user)
     const syncedWorkspace = await syncedWorkspaceService.getSyncedWorkspace()
     console.info(`Creating channel ${channel.channelName}`)
-    const slackClient = new WebClient(z.string().parse(syncedWorkspace?.slackAccessToken))
 
     let createResponse: ConversationsCreateResponse
     try {
-      createResponse = await slackClient.conversations.create({
+      createResponse = await this.slackClient.conversations.create({
         name: channel.channelName,
         // Make channels public as per current requirements
         is_private: false,
         team_id: z.string().parse(syncedWorkspace?.slackTeamId),
         token: z.string().parse(syncedWorkspace?.slackAccessToken),
       })
+      console.log('createresp', createResponse)
     } catch (e: unknown) {
       console.error(e)
       throw new APIError(httpStatus.INTERNAL_SERVER_ERROR, 'Failed to create corresponding slack channel')
